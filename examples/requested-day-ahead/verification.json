@@ -1,0 +1,57 @@
+{
+  "target_dates_local": [
+    "2026-01-31",
+    "2026-02-01"
+  ],
+  "timezone": "Asia/Almaty",
+  "horizons": "25-48 (24 to <48 hours ahead)",
+  "trained_until": "2025-12-31T19:00:00Z",
+  "model_version": "validation-be2706022497",
+  "selection_window": "December 2025",
+  "january_role": "historical test; not training for these outputs",
+  "summaries": [
+    {
+      "target_date_local": "2026-01-31",
+      "turbine_id": "turbine_1",
+      "issued_at": "2026-01-29T19:00:00Z",
+      "forecast_rows": 24,
+      "actual_rows": 24,
+      "mean_prediction": 0.4737983414401455,
+      "mae": 0.30051087141401805,
+      "rmse": 0.33335750665773634
+    },
+    {
+      "target_date_local": "2026-01-31",
+      "turbine_id": "turbine_2",
+      "issued_at": "2026-01-29T19:00:00Z",
+      "forecast_rows": 24,
+      "actual_rows": 24,
+      "mean_prediction": 0.4645965855313778,
+      "mae": 0.3157694031116138,
+      "rmse": 0.35407133435588445
+    },
+    {
+      "target_date_local": "2026-02-01",
+      "turbine_id": "turbine_1",
+      "issued_at": "2026-01-30T19:00:00Z",
+      "forecast_rows": 24,
+      "actual_rows": 0,
+      "mean_prediction": 0.11873379528502441,
+      "mae": null,
+      "rmse": null
+    },
+    {
+      "target_date_local": "2026-02-01",
+      "turbine_id": "turbine_2",
+      "issued_at": "2026-01-30T19:00:00Z",
+      "forecast_rows": 24,
+      "actual_rows": 0,
+      "mean_prediction": 0.11407404938950887,
+      "mae": null,
+      "rmse": null
+    }
+  ],
+  "february_actuals_available": false,
+  "reason_for_frozen_model": "Both preceding-midnight issuances occur in January; training through January end would be future information.",
+  "csv_sha256": "089deba30314a629515b20988dca9ab2f2e52c804c0222a977699b0d01fe97ce"
+}
