@@ -1,0 +1,16 @@
+{
+  "methods": [
+    "curve",
+    "direct_median",
+    "kernel_q0.6",
+    "kernel_q0.4",
+    "kernel_blend_0.5",
+    "blend_direct_0.5"
+  ],
+  "folds": [
+    "2025-07",
+    "2025-08",
+    "2025-09"
+  ],
+  "purpose": "Earlier-season check of a shortlist frozen after January diagnostics; no selection on these folds"
+}

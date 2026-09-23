@@ -154,8 +154,6 @@ def main():
         st.sidebar.warning(SYNTHETIC_BANNER)
     else:
         st.sidebar.info("Published model output · UTC")
-    with st.sidebar.expander("About this dataset"):
-        st.text(data.manifest["description"])
     choices = forecast_choices(data.forecasts)
     ids = choices.forecast_id.tolist()
     labels = {row.forecast_id: f"{utc(row.issued_at)} · {row.forecast_id}" for row in choices.itertuples()}
@@ -165,11 +163,14 @@ def main():
     columns = st.columns([1, 2])
     turbine = columns[0].selectbox("Turbine", list(TURBINES), format_func=TURBINES.get, key="turbine")
     forecast_id = columns[1].selectbox("Forecast issuance (UTC)", ids, format_func=labels.get, key="forecast_id")
+    selected_metadata = data.manifest.get("forecast_metadata", {}).get(forecast_id, data.manifest)
+    with st.sidebar.expander("About this dataset"):
+        st.text(selected_metadata["description"])
     selected = data.forecasts[data.forecasts.forecast_id.eq(forecast_id) & data.forecasts.turbine_id.eq(turbine)].sort_values("valid_time")
     degraded = selected.status.eq("degraded").any()
     if degraded:
         st.warning("Degraded forecast — review the source warnings before using this forecast.")
-    for warning in data.manifest["warnings"]:
+    for warning in selected_metadata["warnings"]:
         if warning != SYNTHETIC_BANNER:
             st.sidebar.warning(warning)
     failures = data.events[data.events.forecast_id.eq(forecast_id) & data.events.status.eq("failed")]
@@ -189,6 +190,8 @@ def main():
     with forecast_tab:
         forecast()
     with metrics_tab:
+        if selected_metadata.get("metrics_scope"):
+            st.caption(selected_metadata["metrics_scope"])
         show_metrics(data.metrics, turbine, synthetic)
     with trace_tab:
         show_events(data.events, forecast_id, synthetic)

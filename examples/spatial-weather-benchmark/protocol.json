@@ -1,0 +1,67 @@
+{
+  "methods": [
+    "curve",
+    "site_wind",
+    "spatial_wind",
+    "gradient_wind",
+    "spatial_direct",
+    "spatial_hist",
+    "blend_spatial_direct"
+  ],
+  "points": {
+    "r0c0": [
+      43.394174,
+      78.287216
+    ],
+    "r0c1": [
+      43.394174,
+      78.537216
+    ],
+    "r0c2": [
+      43.394174,
+      78.787216
+    ],
+    "r1c0": [
+      43.644174,
+      78.287216
+    ],
+    "r1c1": [
+      43.644174,
+      78.537216
+    ],
+    "r1c2": [
+      43.644174,
+      78.787216
+    ],
+    "r2c0": [
+      43.894174,
+      78.287216
+    ],
+    "r2c1": [
+      43.894174,
+      78.537216
+    ],
+    "r2c2": [
+      43.894174,
+      78.787216
+    ]
+  },
+  "models": [
+    "gfs_global",
+    "icon_global"
+  ],
+  "variables": [
+    "wind_speed_10m",
+    "wind_speed_100m",
+    "wind_direction_100m",
+    "pressure_msl",
+    "temperature_2m"
+  ],
+  "selection": "December 1-29, all labels available before Jan1 boundary issuance",
+  "telemetry_and_training_label_delay_hours": 2,
+  "publication_delay_assumed_hours": 8,
+  "january": "Reused diagnostic, never fitting or selection; full month and separate causal Jan1 fit",
+  "spatial_design": "Fixed 3x3 grid at 0.25-degree steps around turbine midpoint, chosen without target scoring",
+  "publication_provenance_verified": false,
+  "source_sha256": "3d5e9bf257c5f3103c32613b012f4a956241608c942e4cf6aebff28ecf9ad89f"
+}

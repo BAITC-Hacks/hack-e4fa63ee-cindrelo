@@ -1,0 +1,49 @@
+{
+  "scope": "January 1-31, 1488 pairs/model, 744/turbine; horizons25-48",
+  "gain_definition": "baseline absolute error minus candidate absolute error; positive is improvement",
+  "method": "src.accuracy.uncertainty: paired circular day-block bootstrap, 2000 draws, seed42, whole days preserve both turbines",
+  "inference_limitations": [
+    "January was repeatedly examined in earlier experiments; intervals are exploratory and not corrected for model search.",
+    "January31 is one target day with 48 correlated turbine-hours; no day-level significance interval is estimated for that single day.",
+    "December-selected role refers to this batch only, not an untouched January holdout."
+  ],
+  "source_predictions_sha256": "e1f76ca1eca3927cb43ad032523f9bbfe1922b88c0c0db8a7b12f1fb5076561f",
+  "candidates": {
+    "fresh_wind_cat": {
+      "role": "December 1-29 selected winner",
+      "absolute_mae_gain": 0.0027023176337920576,
+      "block_day_95pct_intervals": {
+        "1": [
+          -0.03196804730724021,
+          0.032937127442305855
+        ],
+        "3": [
+          -0.03527245721809334,
+          0.03793071490091809
+        ],
+        "7": [
+          -0.024469680741599026,
+          0.02963410072938464
+        ]
+      }
+    },
+    "blend_fresh_cat_time": {
+      "role": "Post-hoc January best; exploratory diagnostic",
+      "absolute_mae_gain": 0.007497650348433799,
+      "block_day_95pct_intervals": {
+        "1": [
+          -0.010624342107273808,
+          0.023668467041665135
+        ],
+        "3": [
+          -0.014091029189559212,
+          0.026058831430683264
+        ],
+        "7": [
+          -0.009170983810649609,
+          0.023354565235348488
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "selected": "spatial_wind",
+  "december1_29_mae": {
+    "spatial_wind": 0.19323366945519893,
+    "gradient_wind": 0.1949958379507569,
+    "spatial_hist": 0.1965483717231473,
+    "spatial_direct": 0.1966677171489652,
+    "site_wind": 0.197417355599657,
+    "blend_spatial_direct": 0.1984699279839176,
+    "curve": 0.21998194175424646
+  }
+}

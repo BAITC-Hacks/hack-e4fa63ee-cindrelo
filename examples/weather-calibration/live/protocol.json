@@ -1,0 +1,19 @@
+{
+  "reporting_delay_hours_after_interval_end": 2,
+  "selection": "December day-ahead MAE",
+  "methods": [
+    "curve",
+    "bias6_0.25",
+    "bias6_0.5",
+    "bias6_1.0",
+    "bias24_0.25",
+    "bias24_0.5",
+    "bias24_1.0",
+    "dynamic_power4",
+    "dynamic_power6",
+    "dynamic_wind4",
+    "dynamic_wind6",
+    "dynamic_wind4_blend"
+  ],
+  "january": "past available telemetry only; no January fitting"
+}

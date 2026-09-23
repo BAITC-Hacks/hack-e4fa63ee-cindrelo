@@ -1,0 +1,33 @@
+{
+  "pairs": 1488,
+  "max_abs_prediction_difference": 1.1102230246251565e-16,
+  "january_mae": 0.16073748807186025,
+  "january31_mae": 0.24278648202914974,
+  "source_sha256": "f18cbf24d7254f6add60bfc41c397f4c01d38b15f2b36db51a76c9a97a1c9f39",
+  "no_january_fitting_labels": true,
+  "artifact_sha256": {
+    "boundary.cbm": "c887efefbbaf35414f5a18bb25e73842faf8bdca85d6d04b12fbe17da630935b",
+    "boundary.json": "6f40ab4e8935288aa37ef0f3bea0ce41f6ce84600d377eadf47c90fcc7dbae77",
+    "demo_reference.json": "7ffec5a746f4a43231d64ae140177d31041412c8b40a765fc5768b4c5dea6c79",
+    "january.cbm": "d07fb197a95a2730bd5ab27fe04d08f9fd891acfe118e732599a688b073ae690",
+    "january.json": "108a5f06ce796a26fdffa23c64bbed4b5987f2584c2b78407c17912e77f91c89",
+    "manifest.json": "14e1af98efc55cb312c1ea04c8f66abc21781c304c91145a969f662855a92c9e",
+    "README.md": "030b23c7175aaedcf0034517df6f2eaa99a69caac2a1f2d2c9b73936efb7a74c"
+  },
+  "inference_source_sha256": "f18cbf24d7254f6add60bfc41c397f4c01d38b15f2b36db51a76c9a97a1c9f39",
+  "weather_source_sha256": "264958956555d495e4b649c6df85cd2710c3102e19803506de756c1ca9474b50",
+  "test_sha256": "5fb3ebdf995029d939e8e0c921e0aa40a8095a40c2da56f77df4fadfabadaf14",
+  "tests": {
+    "passed": 10,
+    "elapsed_seconds": 7.33,
+    "scope": "portable matrix/imputation, LF/CRLF metadata, no optional research dependencies, hybrid window, native-error recovery, checksums, demo golden predictions, used/unused weather hash and validated cache fallback"
+  },
+  "weather_artifact_sha256": {
+    "examples/candidate/weather/07b76dd36bb47e859b7f76aa94661c501da7ff28c703bd103222d87d35e1f7ef.json": "b01ee9dd3a32f054fd5c2bf81bc55ff6e146b483e4e92ec64efc634a33929418",
+    "examples/candidate/weather/10a6cdb59dbc828e8f45ca64b795bd82d10afa0f5831b6f7ab70cae060ccffeb.json": "37f5b0c9bd31b9c4a6365ad229a2eee626e0c1ea5ddbddea8bdfa3e0e16f16c6",
+    "examples/candidate/weather/5c04ae7e385dfdb1b3d31db39d00b8691432553157949b0b6ddcaa943347cfb5.json": "5568f611f2a0de210aa7c0323ac89d74840df40b3b0ed97a4d635f5aa9d9515a",
+    "examples/candidate/weather/b67bbd402f6d3630b08ec2ef7ecf8c0229624974245eafbc1bbdf0ed756c18dc.json": "e95ce3c0535441cd6cc440a175818dea1311bd61bd8e5526daf079d17a92ad89"
+  },
+  "original_export_source_sha256": "7e702d552fc476e861183b2bf1f02d1f3742e2bc3d7848f2a819785d77ec3c3d",
+  "checksum_policy": "SHA-256 with CRLF normalized to LF for text; native CBM bytes unchanged"
+}

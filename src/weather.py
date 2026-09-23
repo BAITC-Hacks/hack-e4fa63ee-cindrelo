@@ -18,6 +18,39 @@ def eligible_run(issued_at, delay_hours):
     return (utc(issued_at) - pd.Timedelta(hours=delay_hours)).floor("12h")
 
 
+def validated_frame(payload, expected=None):
+    """Validate provider data before publishing it to a reusable cache."""
+    try:
+        units = payload["hourly_units"]
+        if any(units[v] != "m/s" for v in VARIABLES[:2]) or units["temperature_2m"] != "°C" or units["wind_direction_100m"] != "°":
+            raise ValueError("Unexpected weather units")
+        frame = pd.DataFrame(payload["hourly"]).rename(columns={"time": "valid_time"})
+        frame["valid_time"] = pd.to_datetime(frame.valid_time, utc=True)
+        if frame.empty or frame.valid_time.isna().any():
+            raise ValueError("Missing weather timestamps")
+        if frame.valid_time.duplicated().any():
+            raise ValueError("Duplicate weather times")
+        if not frame.valid_time.eq(frame.valid_time.dt.floor("h")).all():
+            raise ValueError("Weather timestamps must be hourly interval starts")
+        frame[VARIABLES] = frame[VARIABLES].apply(pd.to_numeric, errors="raise")
+        if not np.isfinite(frame[VARIABLES].to_numpy(dtype=float)).all():
+            raise ValueError("Nonfinite weather values")
+        if (frame[VARIABLES[:2]] < 0).any().any():
+            raise ValueError("Negative forecast wind speed")
+        frame = frame.set_index("valid_time")
+        if expected is not None:
+            frame = frame.reindex(expected)
+            if not np.isfinite(frame[VARIABLES].to_numpy(dtype=float)).all():
+                raise ValueError("Weather does not cover the complete 48-hour horizon")
+        latitude, longitude = float(payload["latitude"]), float(payload["longitude"])
+        if not np.isfinite([latitude, longitude]).all() or not (-90 <= latitude <= 90 and -180 <= longitude <= 180):
+            raise ValueError("Invalid weather grid coordinates")
+        frame.index.name = "valid_time"
+        return frame.reset_index()
+    except (KeyError, TypeError, AttributeError) as exc:
+        raise ValueError("Malformed weather response") from exc
+
+
 class Weather:
     def __init__(self, cfg, offline=False, cache_dir=None, *, refresh=False,
                  fallback_cache_dirs=(), stable_hashes=False, timeout=45, attempts=3):
@@ -29,7 +62,7 @@ class Weather:
         self.timeout, self.attempts = timeout, attempts
         self.retrievals = []
 
-    def fetch(self, turbine, run):
+    def fetch(self, turbine, run, expected=None):
         run = utc(run)
         point = self.cfg["turbines"][turbine]
         params = {"latitude": point["latitude"], "longitude": point["longitude"],
@@ -57,6 +90,9 @@ class Weather:
                     payload = json.load(response)
                 if "hourly" not in payload:
                     raise ValueError("Provider returned no hourly weather")
+                # Never replace a verified archive with an incomplete/invalid
+                # HTTP 200 response. Horizon requests supply their exact times.
+                validated_frame(payload, expected)
                 envelope = {"request": params, "url": url, "run_time": iso(run),
                             "retrieved_at": iso(pd.Timestamp.now(tz="UTC")),
                             "content_hash": digest(payload), "response": payload}
@@ -67,6 +103,7 @@ class Weather:
             except (OSError, ValueError) as exc:
                 if attempt == self.attempts - 1:
                     if self.refresh and cached is not None:
+                        validated_frame(cached["response"], expected)
                         self.retrievals.append({"turbine_id": turbine, "run_time": iso(run),
                                                 "source": "cached_fallback", "reason": type(exc).__name__})
                         return cached
@@ -85,22 +122,9 @@ class Weather:
         expected = pd.date_range(issue, periods=48, freq="h")
         frames, hashes = [], []
         for turbine in self.cfg["turbines"]:
-            envelope = self.fetch(turbine, run)
+            envelope = self.fetch(turbine, run, expected)
             payload = envelope["response"]
-            units = payload["hourly_units"]
-            if any(units[v] != "m/s" for v in VARIABLES[:2]) or units["temperature_2m"] != "°C" or units["wind_direction_100m"] != "°":
-                raise ValueError("Unexpected weather units")
-            frame = pd.DataFrame(payload["hourly"]).rename(columns={"time": "valid_time"})
-            frame["valid_time"] = pd.to_datetime(frame.valid_time, utc=True)
-            if frame.valid_time.duplicated().any():
-                raise ValueError("Duplicate weather times")
-            frame = frame.set_index("valid_time").reindex(expected)
-            if not np.isfinite(frame[VARIABLES].to_numpy(dtype=float)).all():
-                raise ValueError("Weather does not cover the complete 48-hour horizon")
-            if (frame[VARIABLES[:2]] < 0).any().any():
-                raise ValueError("Negative forecast wind speed")
-            frame.index.name = "valid_time"
-            frame = frame.reset_index()
+            frame = validated_frame(payload, expected)
             frame["turbine_id"] = turbine
             frame["issued_at"] = issue
             frame["weather_run_time"] = run

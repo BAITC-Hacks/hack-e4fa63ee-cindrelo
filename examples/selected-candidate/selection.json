@@ -1,0 +1,47 @@
+{
+  "status": "dashboard_default",
+  "candidate": "add_wind_cat",
+  "name": "AIFS/GEM CatBoost wind calibration followed by empirical power curve",
+  "production_promoted": true,
+  "selection_metric": "normalized-power MAE",
+  "selection_target_window_local": [
+    "2025-12-01",
+    "2025-12-29"
+  ],
+  "selection_timezone": "Asia/Almaty",
+  "selection_mae": 0.19228854872227472,
+  "selection_labels_available_at": "2025-12-29T21:00:00Z",
+  "first_january_issuance": "2025-12-30T19:00:00Z",
+  "january_role": "reused research diagnostic; not selection or training",
+  "january_full_mae": 0.16073748807186025,
+  "january31_mae": 0.24278648202914974,
+  "january_pairs": 1488,
+  "january31_pairs": 48,
+  "horizons": [
+    25,
+    48
+  ],
+  "interval_start_leads_hours": [
+    24,
+    47
+  ],
+  "reporting_delay_after_interval_end_hours": 2,
+  "weather_publication_delay_assumed_hours": 8,
+  "historical_publication_verified": false,
+  "goal_mae_max": 0.05,
+  "goal_achieved": false,
+  "source_selection": "examples/ai-weather-benchmark/selection.json",
+  "source_protocol": "examples/ai-weather-benchmark/protocol.json",
+  "source_report": "examples/ai-weather-benchmark/report.json",
+  "source_selection_sha256": "668fe31d3f9392a631533a9ef94f2a5e9b17b20bb819ef6987ac0d94ee47a501",
+  "serving_status": "Portable AIFS/GEM day-ahead head integrated with dashboard cycle; empirical curve for hours 1-24.",
+  "missing_metadata": "User confirmed no additional hub-height, timezone/interval or availability/curtailment metadata.",
+  "serving_method": "aifs_gem",
+  "serving_policy": {
+    "1-24": "empirical_curve",
+    "25-48": "add_wind_cat"
+  },
+  "serving_manifest": "examples/candidate/manifest.json",
+  "serving_verification": "examples/candidate/verification.json",
+  "update_accuracy_validated": false
+}

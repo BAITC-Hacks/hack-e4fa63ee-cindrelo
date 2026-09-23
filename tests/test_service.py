@@ -161,3 +161,47 @@ def test_online_outage_uses_verified_cache_with_explicit_source(isolated, monkey
     turbine = next(t for t, point in cfg["turbines"].items() if point["latitude"] == payload["request"]["latitude"])
     with pytest.raises(ValueError, match="checksum mismatch"):
         provider.fetch(turbine, run)
+
+
+def test_live_refresh_isolated_from_archives_and_bad_payload_keeps_snapshot(isolated, monkeypatch):
+    """Valid and invalid refreshes must preserve immutable research/demo inputs."""
+    from urllib.parse import parse_qs, urlparse
+
+    canonical = isolated / "data/weather"
+    shutil.copytree(isolated / "examples/backend/weather", canonical)
+    canonical_bytes = {p.name: p.read_bytes() for p in canonical.glob("*.json")}
+    first = run_offline(isolated, include_update=False)
+    first_snapshot = Path(first["output_dir"])
+    first_bytes = {name: (first_snapshot/name).read_bytes() for name in service.FILES}
+    envelopes = [json.loads(p.read_text(encoding="utf-8")) for p in canonical.glob("*.json")]
+    bad_response = False
+
+    def response(url, **kwargs):
+        params = parse_qs(urlparse(url).query)
+        envelope = next(e for e in envelopes if str(e["request"]["latitude"]) == params["latitude"][0]
+                        and e["request"]["run"] == params["run"][0])
+        payload = json.loads(json.dumps(envelope["response"]))
+        if bad_response:
+            payload["hourly"]["wind_speed_100m"][19] = None
+        else:
+            payload["hourly"]["wind_speed_100m"][19] += .1
+        return io.BytesIO(json.dumps(payload).encode("utf-8"))
+
+    monkeypatch.setattr(weather, "urlopen", response)
+    monkeypatch.setattr(weather.time, "sleep", lambda _: None)
+    refreshed = service.run_forecast_cycle(issued_at=ISSUE, output=isolated / "outputs/run",
+        controller="deterministic", offline=False, include_update=False)
+    cache = isolated / "outputs/dashboard-weather-cache"
+    cache_bytes = {p.name: p.read_bytes() for p in cache.glob("*.json")}
+    assert len(cache_bytes) == 2
+    assert canonical_bytes == {p.name: p.read_bytes() for p in canonical.glob("*.json")}
+    assert canonical_bytes == {p.name: p.read_bytes() for p in (isolated / "examples/backend/weather").glob("*.json")}
+    bad_response = True
+    recovered = service.run_forecast_cycle(issued_at=ISSUE, output=isolated / "outputs/run",
+        controller="deterministic", offline=False, include_update=False)
+    assert recovered["results"][0]["deduplicated"]
+    assert cache_bytes == {p.name: p.read_bytes() for p in cache.glob("*.json")}
+    assert (Path(recovered["output_dir"])/"forecasts.csv").read_bytes() == (Path(refreshed["output_dir"])/"forecasts.csv").read_bytes()
+    assert first_bytes == {name: (first_snapshot/name).read_bytes() for name in service.FILES}
+    events = [json.loads(line) for line in (Path(recovered["output_dir"])/"events.jsonl").read_text().splitlines()]
+    assert any(e["tool"] == "weather_source" and "cached_fallback" in e["message"] for e in events)

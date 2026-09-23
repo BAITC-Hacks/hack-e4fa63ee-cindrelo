@@ -1,0 +1,22 @@
+{
+  "selected": "hist_mae_live",
+  "december_mae": {
+    "hist_mae_live": 0.20693973894202417,
+    "hist_mae_weather": 0.21098670962696217,
+    "hist_mse_live": 0.21231327344787945,
+    "neural_live": 0.21417040678244373,
+    "knn_weather": 0.21487511752317637,
+    "random_forest_live": 0.21514170551605452,
+    "neural_weather": 0.21518364429282621,
+    "extra_trees_live": 0.2154343071707347,
+    "spline_weather": 0.21624467019255056,
+    "extra_trees_weather": 0.21651473793356332,
+    "random_forest_weather": 0.21711609023178174,
+    "rbf_weather": 0.2177698433314478,
+    "rbf_live": 0.21846199115732257,
+    "spline_live": 0.21870154905616632,
+    "knn_live": 0.21931293420354134,
+    "hist_mse_weather": 0.22033383816002172,
+    "curve": 0.22843968639513165
+  }
+}

@@ -28,6 +28,10 @@ class ForecastCycleError(RuntimeError):
 
 
 def _bundle(issue, cfg):
+    candidate_directory = ROOT / "examples/candidate"
+    if candidate_directory.exists():
+        from .candidate import load_bundle as load_candidate
+        return load_candidate(cfg, issue, directory=candidate_directory)
     for name in ["final", "validation", "tuning"]:
         if (ROOT / "artifacts" / f"{name}.pkl").exists():
             bundle = load_bundle(name, cfg)
@@ -92,12 +96,22 @@ def run_forecast_cycle(*, issued_at, output, controller="agent", offline=False,
                     run = ForecastRun(cfg, origin, staging, offline=offline, bundle=bundle,
                                       on_event=on_event, hourly=hourly, refresh_observations=True)
                     run.provider = Weather(cfg, offline=offline, refresh=not offline,
-                                           fallback_cache_dirs=(ROOT / "examples/backend/weather",),
+                                           cache_dir=ROOT / "outputs/dashboard-weather-cache",
+                                           fallback_cache_dirs=(ROOT / "data/weather", ROOT / "examples/backend/weather"),
                                            stable_hashes=True, timeout=12, attempts=1)
+                    if bundle["selected"] == "aifs_gem":
+                        from .candidate_weather import CandidateWeather
+                        run.provider = CandidateWeather(
+                            cfg, offline=offline, refresh=not offline, base_provider=run.provider,
+                            cache_dir=ROOT / "outputs/dashboard-candidate-weather-cache",
+                            fallback_cache_dirs=(ROOT / "examples/candidate/weather",),
+                            stable_hashes=True, timeout=12, attempts=1,
+                        )
                     run.event("cycle", "started", "Initial forecast" if index == 0 else
                               "Replay advanced 12 hours; checking newer eligible weather and recalculating")
                     run.event("model", "completed", json.dumps({"version": bundle["version"],
-                              "trained_until": bundle["trained_until"], "controller": controller}))
+                              "trained_until": bundle["trained_until"], "controller": controller,
+                              "method": bundle["selected"], "horizon_policy": bundle.get("policy")}))
                     result = run_agent(run) if controller == "agent" else run_deterministic(run)
                     if not run.done:
                         raise ForecastCycleError("The controller ended before completing the forecast.")
@@ -111,9 +125,25 @@ def run_forecast_cycle(*, issued_at, output, controller="agent", offline=False,
                     forecasts.valid_time.min(), forecasts.valid_time.max()),
                     ["valid_time", "turbine_id", "power_normalized"]]
                 write_csv(staging / "actuals.csv", actuals)
+                # Publication can happen for the initial issuance while the
+                # selected revision deduplicates. Restore that revision's own
+                # provenance rather than leaving the most recent write's model.
+                manifest_path = staging / "manifest.json"
+                manifest = json.loads(manifest_path.read_text(encoding="utf-8-sig"))
+                metadata = manifest.get("forecast_metadata", {})
+                if ids[-1] in metadata:
+                    manifest = {**metadata[ids[-1]], "forecast_metadata": metadata}
+                    if any(m.get("active_method") == "curve" for m in metadata.values()):
+                        manifest["warnings"] = [*manifest["warnings"],
+                            "This snapshot includes empirical-curve recovery versions; inspect each forecast's model version."]
+                    write_json(manifest_path, manifest)
                 # Fresh clones use the bundled measured January scores, with their
                 # original evaluation window, when no new evaluation exists locally.
-                if not (ROOT / "artifacts/metrics.csv").exists():
+                if bundles[-1]["selected"] == "aifs_gem":
+                    # These scores describe the selected historical day-ahead
+                    # benchmark, never the short head or the current revision.
+                    write_csv(staging / "metrics.csv", pd.DataFrame(bundles[-1]["metrics"]))
+                elif not (ROOT / "artifacts/metrics.csv").exists():
                     shutil.copyfile(ROOT / "examples/dashboard/metrics.csv", staging / "metrics.csv")
                 for filename in FILES:
                     if not (staging / filename).exists():
@@ -137,7 +167,8 @@ def run_forecast_cycle(*, issued_at, output, controller="agent", offline=False,
                     f"Forecast cycle failed ({type(exc).__name__}). Previous results were kept. "
                     "Check API/weather access and local run logs, or try offline deterministic rehearsal."
                 ) from None
-        return {"output_dir": str(snapshot), "forecast_id": ids[-1], "forecast_ids": ids, "results": results}
+        return {"output_dir": str(snapshot), "forecast_id": ids[-1], "forecast_ids": ids, "results": results,
+                "model": bundles[-1]["selected"]}
     except ForecastCycleError:
         raise
     except Exception as exc:

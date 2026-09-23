@@ -46,6 +46,9 @@ def render_run_controls(base_directory: Path) -> Path:
             "the forecast, then advances the simulated UTC clock by 12 hours to recalculate "
             "with a newer weather run. This is a historical replay, not today's weather."
         )
+        if (ROOT / "examples/candidate/manifest.json").exists():
+            st.caption("Model: AIFS/GEM for hours 25–48, empirical curve for hours 1–24. "
+                       "The comparison scores cover the January day-ahead research evaluation only.")
         with st.expander("Run options"):
             issued_at = st.text_input(
                 "First forecast issuance (UTC)", value=DEFAULT_ISSUED_AT,

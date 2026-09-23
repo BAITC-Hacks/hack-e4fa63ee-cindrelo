@@ -1,0 +1,6 @@
+{
+  "forecast_mae": 0.3081401372628159,
+  "measured_wind_oracle_mae": 0.03083057445888578,
+  "wind_mae_ms": 2.3660763888888887,
+  "oracle_is_not_a_forecast": true
+}

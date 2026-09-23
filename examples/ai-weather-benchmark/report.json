@@ -1,0 +1,56 @@
+{
+  "selected": "add_wind_cat",
+  "december1_29_mae": {
+    "add_wind_cat": 0.19228854872227472,
+    "add_cat_live": 0.19268968945570733,
+    "add_hist": 0.1929305623153124,
+    "add_cat": 0.19460918681581696,
+    "blend_add_cat": 0.19813339281236803,
+    "no_extra_cat": 0.2001892247263643,
+    "curve": 0.21998194175424646
+  },
+  "december_full_mae": {
+    "add_wind_cat": 0.1931640983655704,
+    "add_cat_live": 0.19329652354201976,
+    "add_cat": 0.19501268385299786,
+    "add_hist": 0.19516644416296366,
+    "no_extra_cat": 0.20184410335173902,
+    "blend_add_cat": 0.20226663825929359,
+    "curve": 0.2270193985584316
+  },
+  "january_full_mae": {
+    "add_cat": 0.15749875129337598,
+    "blend_add_cat": 0.1594070786841217,
+    "add_cat_live": 0.1606818014058782,
+    "add_wind_cat": 0.16073748807186025,
+    "add_hist": 0.16674593597126475,
+    "curve": 0.17678171997552672,
+    "no_extra_cat": 0.1773840553873887
+  },
+  "january2_31_mae": {
+    "add_cat": 0.1568644001825345,
+    "blend_add_cat": 0.15882241663325625,
+    "add_cat_live": 0.16019966562669494,
+    "add_wind_cat": 0.16088995171451725,
+    "add_hist": 0.16709136009080217,
+    "no_extra_cat": 0.17617321461119362,
+    "curve": 0.17623527286679486
+  },
+  "january31_mae": {
+    "add_cat_live": 0.2347354418236116,
+    "add_cat": 0.2348111818607462,
+    "add_wind_cat": 0.24278648202914974,
+    "no_extra_cat": 0.2473280142071034,
+    "add_hist": 0.24748086618553203,
+    "blend_add_cat": 0.27128742831837555,
+    "curve": 0.3081399985851656
+  },
+  "n_january_per_model": 1488,
+  "n_january31_per_model": 48,
+  "numerical_target_met_by": [],
+  "source_note": "AIFS/GEM raw coverage audited in every requested UTC month; known absent baseline August dates persist in training only",
+  "native_archive_missing_values": 0,
+  "production_changed": false,
+  "publication_provenance_verified": false,
+  "january_is_reused_diagnostic": true
+}

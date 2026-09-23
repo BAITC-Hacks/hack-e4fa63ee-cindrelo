@@ -1,0 +1,5 @@
+{
+  "matched_rows": 2962,
+  "maximum_prediction_difference": 0.0,
+  "control": "site_wind equals previous fresh_wind_cat, both December and January"
+}

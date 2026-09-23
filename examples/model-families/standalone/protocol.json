@@ -1,0 +1,26 @@
+{
+  "methods": [
+    "curve",
+    "random_forest_weather",
+    "random_forest_live",
+    "extra_trees_weather",
+    "extra_trees_live",
+    "hist_mae_weather",
+    "hist_mae_live",
+    "hist_mse_weather",
+    "hist_mse_live",
+    "knn_weather",
+    "knn_live",
+    "spline_weather",
+    "spline_live",
+    "rbf_weather",
+    "rbf_live",
+    "neural_weather",
+    "neural_live"
+  ],
+  "selection": "December day-ahead MAE",
+  "january": "all recipes shown diagnostically; cannot change the frozen December selection",
+  "telemetry_delay_hours": 2,
+  "random_validation_split": false,
+  "source_sha256": "463ff9b1ed4b08e16e4d8d7076362fdb11a28dcb0297fc7e657ee24a45edfe24"
+}

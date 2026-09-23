@@ -1,0 +1,20 @@
+{
+  "methods": [
+    "curve",
+    "wind_mae4",
+    "wind_mae6",
+    "wind_rmse4",
+    "wind_mae4_blend",
+    "wind_mae6_blend",
+    "direct_mae4",
+    "direct_mae6",
+    "physical_mae4",
+    "physical_mae6",
+    "sector_bias",
+    "analog"
+  ],
+  "training_weather_start": "2025-06-01",
+  "selection": "December 2025 day-ahead MAE",
+  "january": "previously examined historical test, no January training or recipe selection",
+  "source_sha256": "3e0bcfd01dc2e85eb55bb50324c53c87d72d51f0405f2ec7301410059367ac85"
+}

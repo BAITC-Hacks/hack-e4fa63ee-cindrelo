@@ -1,0 +1,72 @@
+{
+  "candidate": "direct_median",
+  "scores": {
+    "direct_median": 0.17685857042910447,
+    "calibrated_curve": 0.18327362830783886,
+    "residual": 0.19042901106675855,
+    "direct_mean": 0.1920463667390518,
+    "median_curve": 0.19610359141791045,
+    "recent_curve": 0.19661906361552722,
+    "curve": 0.19823634671032017,
+    "mae6": 0.2130813334427294,
+    "mae4": 0.22026384212957764,
+    "rmse4": 0.2258886592948156,
+    "catboost_original": 0.25077987507267546
+  },
+  "gates": {
+    "relative_gain_at_least_3pct": true,
+    "wins_at_least_two_folds": true,
+    "turbine_regression_at_most_005": true,
+    "positive_block_intervals": true
+  },
+  "uncertainty": {
+    "absolute_mae_gain": 0.02137777628121569,
+    "block_day_95pct_intervals": {
+      "1": [
+        0.007961427946644527,
+        0.033952851162318796
+      ],
+      "3": [
+        0.007177484113604947,
+        0.033780267985269376
+      ],
+      "7": [
+        0.010348445492663217,
+        0.03165125092233546
+      ]
+    }
+  },
+  "weather_sha256": "54f987b667d9e0c5338dd391403ef467a73f3ced014e37630f2771b4cfc8fd47",
+  "config": {
+    "raw_timezone": "Asia/Almaty",
+    "calendar_timezone": "Asia/Almaty",
+    "timestamp_convention": "interval_start",
+    "weather_delay_hours": 8,
+    "weather_model": "ecmwf_ifs",
+    "train_start": "2025-09-01",
+    "validation_start": "2026-01-01",
+    "validation_end": "2026-02-01",
+    "turbines_note": "Coordinates from the brief; capacities and hub heights unspecified.",
+    "turbines": {
+      "turbine_1": {
+        "latitude": 43.64515,
+        "longitude": 78.535604,
+        "file_glob": "*turbine 1.csv"
+      },
+      "turbine_2": {
+        "latitude": 43.643198,
+        "longitude": 78.538828,
+        "file_glob": "*turbine 2.csv"
+      }
+    }
+  },
+  "january_mae": {
+    "catboost_original": 0.2666884970402861,
+    "curve": 0.1767793419677241,
+    "direct_median": 0.1799687612007168,
+    "persistence": 0.3657538082437276
+  },
+  "january_no_regression": false,
+  "promote": false,
+  "january_is_reused_evaluation": true
+}

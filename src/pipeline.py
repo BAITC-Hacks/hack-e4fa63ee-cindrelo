@@ -122,6 +122,7 @@ class ForecastRun:
         if not self.validated:
             raise ValueError("Validate inputs before prediction")
         method = "curve" if fallback else self.bundle["selected"]
+        self.prediction_method = method
         identity = digest({"issue": iso(self.issue), "weather": self.weather.weather_hash.iloc[0],
                            "config": self.cfg, "model": self.bundle["version"], "method": method})
         self.forecast_id = self.issue.strftime("%Y%m%dT%H%MZ") + "-" + identity[:12]
@@ -167,14 +168,39 @@ class ForecastRun:
         actuals = actuals.loc[actuals.complete & actuals.valid_time.between(combined.valid_time.min(), combined.valid_time.max()),
                               ["valid_time", "turbine_id", "power_normalized"]]
         metric_path = ROOT / "artifacts/metrics.csv"
-        metrics = pd.read_csv(metric_path, encoding="utf-8-sig") if metric_path.exists() else pd.DataFrame(columns=METRIC_COLUMNS)
+        metrics = (pd.DataFrame(self.bundle["metrics"], columns=METRIC_COLUMNS) if "metrics" in self.bundle
+                   else pd.read_csv(metric_path, encoding="utf-8-sig") if metric_path.exists()
+                   else pd.DataFrame(columns=METRIC_COLUMNS))
         write_csv(self.output / "forecasts.csv", combined)
         write_csv(self.output / "actuals.csv", actuals)
         write_csv(self.output / "metrics.csv", metrics)
-        write_json(self.output / "manifest.json", {"schema_version": 1, "data_kind": "model_output",
+        manifest = {"schema_version": 1, "data_kind": "model_output",
                     "timezone": "UTC", "target_unit": "normalized_power",
                     "description": "Archived-weather model forecasts; historical provenance remains unverified.",
-                    "warnings": warnings(self.cfg), "config": self.cfg})
+                    "warnings": warnings(self.cfg), "config": self.cfg}
+        if self.bundle["selected"] == "aifs_gem":
+            manifest.update({
+                "description": "AIFS/GEM wind model for hours 25–48; empirical curve for hours 1–24. "
+                               "Historical replay with conditional weather availability.",
+                "model_policy": self.bundle["policy"],
+                "active_method": self.prediction_method,
+                "model_version": self.bundle["version"],
+                "metrics_scope": self.bundle["manifest"]["metrics_scope"],
+                "weather_provenance": getattr(self.provider, "provenance", {}),
+            })
+            manifest["warnings"] += [
+                self.bundle["manifest"]["metrics_scope"],
+                "January was reused for research diagnostics. February actuals are unavailable.",
+                "Additional providers use fixed lead offsets with an assumed eight-hour publication delay; original publication times are unverified.",
+            ]
+            if self.prediction_method == "curve":
+                manifest["description"] = "Empirical-curve recovery forecast for all 48 hours; AIFS/GEM prediction failed."
+                manifest["warnings"].append("Displayed AIFS/GEM research metrics do not score this fallback forecast.")
+        manifest_path = self.output / "manifest.json"
+        saved = json.loads(manifest_path.read_text(encoding="utf-8-sig")) if manifest_path.exists() else {}
+        metadata = saved.get("forecast_metadata", {})
+        metadata[self.forecast_id] = manifest.copy()
+        write_json(manifest_path, {**manifest, "forecast_metadata": metadata})
         self.done = True
         return {"published": True, "forecast_id": self.forecast_id, "directory": str(self.output)}
 

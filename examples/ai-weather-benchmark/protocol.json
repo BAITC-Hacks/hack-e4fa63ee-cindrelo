@@ -1,0 +1,123 @@
+{
+  "created_at": "2026-09-23T12:19:48.856150+00:00",
+  "methods": [
+    "curve",
+    "no_extra_cat",
+    "add_cat",
+    "add_hist",
+    "add_cat_live",
+    "add_wind_cat",
+    "blend_add_cat"
+  ],
+  "recipes": {
+    "no_extra_cat": {
+      "family": "CatBoost",
+      "target": "power",
+      "iterations": 300,
+      "depth": 5,
+      "loss": "MAE",
+      "calendar_features": true,
+      "additional_weather": false
+    },
+    "add_cat": {
+      "family": "CatBoost",
+      "target": "power",
+      "iterations": 300,
+      "depth": 5,
+      "loss": "MAE",
+      "calendar_features": true
+    },
+    "add_hist": {
+      "family": "HistGradientBoosting",
+      "target": "power",
+      "iterations": 250,
+      "leaves": 15,
+      "loss": "absolute_error",
+      "calendar_features": true
+    },
+    "add_cat_live": {
+      "family": "CatBoost",
+      "target": "power",
+      "iterations": 300,
+      "depth": 5,
+      "loss": "MAE",
+      "calendar_features": false,
+      "reporting_delay_hours": 2,
+      "stale_fallback_hours": 5
+    },
+    "add_wind_cat": {
+      "family": "CatBoost",
+      "target": "measured_wind_then_curve",
+      "iterations": 300,
+      "depth": 4,
+      "loss": "RMSE",
+      "calendar_features": false
+    },
+    "blend_add_cat": {
+      "curve_weight": 0.5,
+      "add_cat_weight": 0.5
+    }
+  },
+  "models_and_native_variables": {
+    "ecmwf_aifs025_single": [
+      "wind_speed_10m",
+      "wind_speed_100m",
+      "wind_direction_10m",
+      "wind_direction_100m",
+      "temperature_2m",
+      "surface_pressure",
+      "relative_humidity_2m",
+      "cloud_cover",
+      "precipitation"
+    ],
+    "cmc_gem_gdps": [
+      "wind_speed_10m",
+      "wind_speed_80m",
+      "wind_speed_120m",
+      "wind_direction_10m",
+      "wind_direction_80m",
+      "wind_direction_120m",
+      "temperature_2m",
+      "surface_pressure",
+      "relative_humidity_2m",
+      "cloud_cover",
+      "precipitation"
+    ]
+  },
+  "acquisition_months_utc": [
+    "2025-06",
+    "2026-01"
+  ],
+  "baseline": "Empirical measured-wind power curve fitted only from matured pre-cutoff observations, applied to existing IFS 100m forecasts",
+  "existing_forecast_features": "IFS plus eligible GFS/ICON/JMA from immutable baseline readers",
+  "matched_control": "no_extra_cat vs add_cat holds iterations/depth/loss/calendar/training/timing fixed; only additional weather features differ",
+  "shared_hyperparameters": {
+    "seed": 42,
+    "cat_learning_rate": 0.03,
+    "cat_l2_leaf_reg": 10,
+    "hist_learning_rate": 0.05,
+    "hist_min_samples_leaf": 40,
+    "hist_l2": 10,
+    "hist_early_stopping": false
+  },
+  "selection": "December 1-29 local target days only; score and freeze winner before January evaluation",
+  "training": "June onward forecast pairs; each month uses pre-month matured labels plus an earlier fit for its preceding-day boundary issuance",
+  "january": "Reused diagnostic only; no January target labels fit models or select recipes",
+  "telemetry_and_label_delay_hours_after_interval_end": 2,
+  "forecast_publication_delay_hours_assumed": 8,
+  "conditional_weather_rule": "valid_time - offset_hours + 8h <= issue; prefer 48h only when eligible, otherwise 72h",
+  "live_features": "Earlier January measurements can enter later forecast features after interval-end+2h; no future actual wind",
+  "full_scope": "Both sites, complete January1-31, 1488 pairs per method; Jan31 48 pairs",
+  "target_mae_max": 0.05,
+  "max_cpu_threads": 2,
+  "all_null_features": "Drop only when all-null in training; median imputation fitted on training only",
+  "publication_provenance_verified": false,
+  "production_changed": false,
+  "sources": [
+    "https://open-meteo.com/en/docs/previous-runs-api",
+    "https://open-meteo.com/en/docs/ecmwf-api",
+    "https://open-meteo.com/en/docs/gem-api",
+    "https://open-meteo.com/en/docs/model-updates"
+  ],
+  "source_sha256": "3935ae09f83b0befd5b65a3b3093261f882751aad64337a280f1fea5285ff972"
+}

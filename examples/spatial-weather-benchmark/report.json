@@ -1,0 +1,44 @@
+{
+  "selected": "spatial_wind",
+  "december1_29_mae": {
+    "spatial_wind": 0.19323366945519893,
+    "gradient_wind": 0.1949958379507569,
+    "spatial_hist": 0.1965483717231473,
+    "spatial_direct": 0.1966677171489652,
+    "site_wind": 0.197417355599657,
+    "blend_spatial_direct": 0.1984699279839176,
+    "curve": 0.21998194175424646
+  },
+  "december_full_mae": {
+    "spatial_wind": 0.19628244515314996,
+    "gradient_wind": 0.1970426536855295,
+    "spatial_hist": 0.1985516341457741,
+    "spatial_direct": 0.19917287603646647,
+    "site_wind": 0.1995816459804287,
+    "blend_spatial_direct": 0.20361275557056044,
+    "curve": 0.2270193985584316
+  },
+  "january_full_mae": {
+    "blend_spatial_direct": 0.16637453029585172,
+    "spatial_direct": 0.1714580013801221,
+    "site_wind": 0.1740794023417347,
+    "spatial_wind": 0.17503230449903312,
+    "gradient_wind": 0.17618480162388842,
+    "curve": 0.17678171997552672,
+    "spatial_hist": 0.18383863689580437
+  },
+  "january31_mae": {
+    "site_wind": 0.2159400716053784,
+    "gradient_wind": 0.2357456344088064,
+    "spatial_direct": 0.24700504803168563,
+    "spatial_wind": 0.24977166231938017,
+    "blend_spatial_direct": 0.2773843614038453,
+    "spatial_hist": 0.27788651058902136,
+    "curve": 0.3081399985851656
+  },
+  "january_pairs_per_method": 1488,
+  "january31_pairs_per_method": 48,
+  "numerical_target_met_by": [],
+  "production_changed": false,
+  "publication_provenance_verified": false
+}

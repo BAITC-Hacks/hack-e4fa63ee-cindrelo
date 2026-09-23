@@ -1,0 +1,23 @@
+{
+  "source": "Open-Meteo Previous Runs",
+  "offset_hours": 72,
+  "models": [
+    "gfs_global",
+    "icon_global",
+    "jma_gsm"
+  ],
+  "variables": [
+    "wind_speed_10m",
+    "wind_speed_100m",
+    "wind_direction_10m",
+    "temperature_2m",
+    "surface_pressure",
+    "relative_humidity_2m",
+    "cloud_cover",
+    "precipitation"
+  ],
+  "assumed_publication_delay_hours": 8,
+  "exact_run_initialization_and_publication_not_returned": true,
+  "eligibility": "For lead 24..47 h, valid_time -72 h +8 h is at least 17 h before issue; conditional on documented offset semantics.",
+  "no_operational_as_issued_claim": true
+}

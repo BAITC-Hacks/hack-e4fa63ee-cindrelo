@@ -1,0 +1,33 @@
+{
+  "verified_at": "2026-09-23T12:28:58.904600+00:00",
+  "unit_test_command": ".venv/Scripts/python.exe -m pytest tests/test_ai_weather_benchmark.py -q",
+  "unit_tests_passed": 9,
+  "unit_test_seconds": 3.58,
+  "source_unchanged_since_protocol": true,
+  "source_sha256": "3935ae09f83b0befd5b65a3b3093261f882751aad64337a280f1fea5285ff972",
+  "test_sha256": "138cc023f83f3adede19c5bffce3cb5bfdccb18cd76d4dc32cf4633b52689f0b",
+  "document_sha256": "ea8b1756c9c3d3bb0f5ae9da5e2ad656a17d8f2e43f9c6ad489e38b52581e430",
+  "uncertainty_sha256": "12a4d7e5dfe72afd13a4f633da393109a8e3ba4c19c551e9edb0a98814d2c105",
+  "core_source_input_output_hashes_verified": true,
+  "prediction_rows_checked": 20734,
+  "methods": 7,
+  "january_pairs_per_method": 1488,
+  "january31_pairs_per_method": 48,
+  "expected_native_archive_values": 470400,
+  "native_archive_missing_values": 0,
+  "selected_extra_feature_missing_values": 0,
+  "checks": [
+    "finite predictions within [0,1]",
+    "error equals prediction minus actual",
+    "no duplicate model/turbine/target keys",
+    "exact744Januaryhours for each site/method",
+    "forecast availability bounds no later than issue",
+    "model fit cutoff no later than issue",
+    "all fitted labels matured through interval-end plus2h",
+    "no January target labels used in fitting",
+    "December selection labels mature before first January issuance",
+    "selection artifact saved before January evaluation"
+  ],
+  "no_production_changes": true,
+  "note": "Core pre-score protocol and source/hash manifests remain unchanged; this final record adds tests/document/uncertainty verification. Final test-only follow-up adds the optional sklearn dependency skip; all nine targeted checks pass again. Full suite:60tests and10subtests passed."
+}
