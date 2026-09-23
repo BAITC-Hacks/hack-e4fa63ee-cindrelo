@@ -1,0 +1,18 @@
+{
+  "random_forest_weather": [],
+  "random_forest_live": [],
+  "extra_trees_weather": [],
+  "extra_trees_live": [],
+  "hist_mae_weather": [],
+  "hist_mae_live": [],
+  "hist_mse_weather": [],
+  "hist_mse_live": [],
+  "knn_weather": [],
+  "knn_live": [],
+  "spline_weather": [],
+  "spline_live": [],
+  "rbf_weather": [],
+  "rbf_live": [],
+  "neural_weather": [],
+  "neural_live": []
+}

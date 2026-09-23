@@ -1,0 +1,24 @@
+{
+  "selected": "blend_neural_live",
+  "december_mae": {
+    "blend_neural_live": 0.20847355580722357,
+    "blend_hist_mae_live": 0.2089557020450454,
+    "blend_hist_mse_live": 0.20991964275713249,
+    "blend_hist_mae_weather": 0.21079540873637534,
+    "blend_neural_weather": 0.21094078711898082,
+    "blend_random_forest_live": 0.21101868546476676,
+    "blend_hist_mse_weather": 0.21150275890089004,
+    "blend_random_forest_weather": 0.21245400393356717,
+    "blend_extra_trees_live": 0.21272336875750167,
+    "blend_rbf_weather": 0.21275268191131425,
+    "blend_extra_trees_weather": 0.2132926983681079,
+    "blend_spline_live": 0.21364976952477333,
+    "blend_rbf_live": 0.21386799833209252,
+    "blend_spline_weather": 0.2140961885792354,
+    "blend_knn_weather": 0.21483579742325531,
+    "blend_knn_live": 0.2167735450757144,
+    "curve": 0.22843968639513165
+  },
+  "post_hoc": true,
+  "weight": 0.5
+}

@@ -1,0 +1,78 @@
+{
+  "selected": "hist_mae_live",
+  "december_mae": {
+    "hist_mae_live": 0.20693973894202417,
+    "hist_mae_weather": 0.21098670962696217,
+    "hist_mse_live": 0.21231327344787945,
+    "neural_live": 0.21417040678244373,
+    "knn_weather": 0.21487511752317637,
+    "random_forest_live": 0.21514170551605452,
+    "neural_weather": 0.21518364429282621,
+    "extra_trees_live": 0.2154343071707347,
+    "spline_weather": 0.21624467019255056,
+    "extra_trees_weather": 0.21651473793356332,
+    "random_forest_weather": 0.21711609023178174,
+    "rbf_weather": 0.2177698433314478,
+    "rbf_live": 0.21846199115732257,
+    "spline_live": 0.21870154905616632,
+    "knn_live": 0.21931293420354134,
+    "hist_mse_weather": 0.22033383816002172,
+    "curve": 0.22843968639513165
+  },
+  "january_mae": {
+    "curve": 0.17623531729487546,
+    "hist_mae_weather": 0.1847483789896311,
+    "spline_live": 0.1897883495196096,
+    "hist_mae_live": 0.19098344673989018,
+    "extra_trees_live": 0.19298714812833956,
+    "knn_live": 0.19392789523257725,
+    "knn_weather": 0.1953249313553393,
+    "spline_weather": 0.19596755669851665,
+    "rbf_live": 0.1971331756781624,
+    "neural_live": 0.19721316113404938,
+    "neural_weather": 0.19785625017302916,
+    "hist_mse_weather": 0.2000256216250933,
+    "extra_trees_weather": 0.20099605302926374,
+    "rbf_weather": 0.20214748620605832,
+    "hist_mse_live": 0.20647319148950377,
+    "random_forest_live": 0.20820249996052967,
+    "random_forest_weather": 0.2107966435743406
+  },
+  "january31_mae": {
+    "hist_mae_weather": 0.21447413995943898,
+    "random_forest_weather": 0.24078547324420663,
+    "hist_mse_weather": 0.2608765340718598,
+    "extra_trees_weather": 0.27134664568327976,
+    "knn_weather": 0.2728521258836268,
+    "neural_weather": 0.29934706589061183,
+    "spline_weather": 0.3014034470207176,
+    "rbf_weather": 0.30604969277938304,
+    "spline_live": 0.306187222013418,
+    "curve": 0.3081401372628159,
+    "neural_live": 0.30967111266285713,
+    "hist_mse_live": 0.32829227419330953,
+    "hist_mae_live": 0.33530025239405736,
+    "extra_trees_live": 0.3380756591452565,
+    "rbf_live": 0.3398167957855726,
+    "random_forest_live": 0.3467044354106603,
+    "knn_live": 0.3578963993106837
+  },
+  "selected_january_uncertainty": {
+    "absolute_mae_gain": -0.01474812944501471,
+    "block_day_95pct_intervals": {
+      "1": [
+        -0.03860282509845202,
+        0.010973990256796589
+      ],
+      "3": [
+        -0.0414268086395229,
+        0.0075024269484378235
+      ],
+      "7": [
+        -0.03602700521879117,
+        0.004474413092546214
+      ]
+    }
+  },
+  "production_changed": false
+}
