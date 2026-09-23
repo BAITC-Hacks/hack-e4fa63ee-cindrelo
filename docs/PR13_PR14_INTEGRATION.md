@@ -25,7 +25,7 @@ The portable model reproduces all **1,488** January research predictions with a 
 
 The default offline cycle and the online deterministic cycle both published **192** predictions across two issuances. The online run logged **eight external weather responses**. Their numerical predictions matched exactly. A clean Windows/Python 3.12 environment installed only `requirements-backend.txt` and ran the offline candidate cycle with scikit-learn absent.
 
-The Horizon browser rehearsal completed the candidate cycle, selected its 12-hour revision, displayed the previous forecast and actuals, and exposed the candidate's day-ahead evaluation window. The missing-API-key path preserved the prior view. Final live-agent and combined-branch test evidence is recorded below after verification.
+The Horizon browser rehearsal completed the candidate cycle, selected its 12-hour revision, displayed the previous forecast and actuals, and exposed the candidate's day-ahead evaluation window. The missing-API-key path preserved the prior view. The final combined branch passed **95 tests and 12 subtests** with `python -m pytest -q` on Windows/Python 3.12. A separate checkout exported from Git with Unix LF line endings also completed the offline cycle in the backend-only environment, preserving both forecast IDs and all predictions. The final browser run used the live OpenAI controller for both issuances: **two completed agent runs, eight external weather responses, 192 predictions and zero failed tool events**. The predictions and IDs exactly matched the deterministic online cycle. See [the verification record](../examples/candidate/integration-verification.json) and [sanitized live trace](../examples/candidate/live-events.jsonl).
 
 ```sh
 python -m src cycle --offline
