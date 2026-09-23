@@ -3,6 +3,7 @@
 - `february_day_ahead.csv`: genuine normalized-power predictions, 672 February hours per turbine (1,344 rows), selected from horizons 25–48 of the preceding local midnight's forecast. It contains the existing forecast lineage columns and preserves degraded status.
 - `verification.json`: repeated replay coverage checks, UTC period bounds, environment, source integration commit, SHA-256 of the export and unresolved assumptions.
 - `live-agent-events.jsonl`: a fresh successful OpenAI tool-controller execution after the encoding fix. `timestamp` is simulated issuance; `executed_at` is actual execution time. The corresponding forecast ID matches the first January example in `examples/dashboard/`.
+- `rehearsal-verification.json` and `rehearsal-events.jsonl`: the subsequent full live forecast, revision and deduplication sequence on integrated main, including real dashboard checks and repeated February replay. See [the rehearsal report](../../docs/BACKEND_REHEARSAL.md) for scope and remaining handoff.
 
 This is an export/evidence directory, not a dashboard snapshot: day-ahead rows intentionally contain only 24 targets per issuance. To view all February forecasts, regenerate the complete five-file dashboard directory with `python -m src train` then `python -m src replay`, and set `CINDRELO_OUTPUT_DIR=outputs/dashboard`. Existing full local caches permit `python -m src replay --offline`.
 
