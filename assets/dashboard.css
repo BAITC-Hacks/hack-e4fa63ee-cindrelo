@@ -1,0 +1,10 @@
+[data-testid="stAppViewContainer"] { background: #f6f8fb; }
+[data-testid="stMainBlockContainer"] { max-width: 1180px; padding-top: 3.5rem; padding-bottom: 3rem; }
+[data-testid="stSidebar"] { background: #edf2f7; }
+h1 { font-size: 2rem !important; letter-spacing: -0.035em; color: #183044; }
+h2, h3 { color: #183044; letter-spacing: -0.02em; }
+[data-testid="stVerticalBlockBorderWrapper"] { background: white; border-radius: 12px; }
+[data-testid="stMetricValue"] { font-size: 1.5rem; }
+[data-testid="stCaptionContainer"] { color: #526476; }
+[data-testid="stCaptionContainer"] p { color: #526476 !important; }
+button { border-radius: 8px !important; }
