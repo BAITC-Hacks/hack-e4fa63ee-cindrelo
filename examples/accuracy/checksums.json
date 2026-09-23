@@ -1,0 +1,6 @@
+{
+  "data\\hourly.csv": "0e89a1b8a35c30066934141d7e56c562450c3c59242c55e3dd51c8455aaf85d0",
+  "outputs\\accuracy\\weather.csv": "54f987b667d9e0c5338dd391403ef467a73f3ced014e37630f2771b4cfc8fd47",
+  "outputs\\accuracy\\predictions.csv": "fde2fee7d9e655435f3e4dee37acc1086769e99bd5f35ab7dcf8456db2a5dc52",
+  "src\\accuracy.py": "b865e272d50f28fc3f83577c8d6a0f1809191614f67feb4ee910d6fc0480aa90"
+}
