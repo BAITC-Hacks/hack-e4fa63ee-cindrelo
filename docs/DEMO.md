@@ -4,6 +4,8 @@ This read-only dashboard displays the files defined in [TEAMMATE_SPEC.md](TEAMMA
 
 Use **Design version** at the top to compare three distinct interfaces: Horizon, Control room and Field report. See the [design comparison and screenshots](DESIGNS.md). Horizon is the default; all versions share the same data and calculations.
 
+**Final presentation:** use Horizon. The [native Windows finalization report](DASHBOARD_FINALIZATION.md) records the no-UTF-8-flag test run, deduplication hashes, real-data screenshots and the remaining browser-save check. It supersedes the historical Windows workaround and test counts below.
+
 ## Start
 
 Use Python 3.11 or newer. From the repository root:
