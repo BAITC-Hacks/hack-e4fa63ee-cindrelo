@@ -35,6 +35,8 @@ For a new live demonstration, follow [the finalization checklist](FINALIZATION_C
 
 The local rehearsal archive is stored at `outputs/packages/cindrelo-rehearsal.zip`, with its SHA-256 sidecar alongside it. It contains a source snapshot, the full local weather cache, model artifacts, and both generated dashboard directories. `PACKAGE_MANIFEST.json` records the packaged source revision and per-file checksums; `PACKAGE_README.md` gives extraction and reproduction commands.
 
+Restoration verified all **451 payload-file checksums**. With socket connections disabled and no API key, the extracted source reproduced both the January demo and the complete February export exactly. This check reused installed dependencies; it did not test dependency installation without internet access. The archive source revision is `12c2540`; later changes on this branch only record the restoration result.
+
 The archive excludes `.env`, `.git`, the virtual environment and unrelated output folders. It is an ignored local backup, not the GitHub submission. Dependency installation is still required on a new machine; offline reproduction refers to forecasting after setup. Only load packaged model pickles from this project's trusted backup.
 
 The repository already includes the portable January example, measured results, complete February day-ahead CSV and reproduction instructions. The model/cache archive preserves the working local state if network access becomes unavailable during presentation. Refresh that backup after the final UI merge if it will be used to present the final design.

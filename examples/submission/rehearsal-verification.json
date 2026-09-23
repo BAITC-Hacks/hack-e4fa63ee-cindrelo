@@ -35,5 +35,15 @@
     "Open-Meteo ECMWF IFS archive may contain hindcasts; as-issued compliance is not established.",
     "Power is normalized, not MW/MWh; February actuals are absent from supplied data.",
     "Weather: Open-Meteo (https://open-meteo.com/), ECMWF; CC BY 4.0 attribution."
-  ]
+  ],
+  "backup_restore": {
+    "archive_sha256": "84639d663281bd247d332028af81d4f955890d0da0f6b516764f308e904d753b",
+    "source_commit": "12c254059832bec7bdbbfad11c7352b876868272",
+    "verified_payload_files": 451,
+    "network_disabled": true,
+    "api_key_present": false,
+    "january_predictions_match": true,
+    "february_predictions_match": true,
+    "dependency_environment": "Existing installed virtual environment; package supplies source/cache/models, not dependency wheels"
+  }
 }
