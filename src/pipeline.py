@@ -34,7 +34,7 @@ def read_forecasts(directory):
     path = Path(directory) / "forecasts.csv"
     if not path.exists():
         return pd.DataFrame(columns=FORECAST_COLUMNS)
-    frame = pd.read_csv(path)
+    frame = pd.read_csv(path, encoding="utf-8-sig")
     for col in ["issued_at", "valid_time", "weather_run_time", "weather_available_at"]:
         frame[col] = pd.to_datetime(frame[col], utc=True)
     return frame
@@ -63,7 +63,7 @@ class ForecastRun:
 
     def flush_events(self):
         self.output.mkdir(parents=True, exist_ok=True)
-        with (self.output / "events.jsonl").open("a") as file:
+        with (self.output / "events.jsonl").open("a", encoding="utf-8") as file:
             for event in self.events:
                 event["forecast_id"] = self.forecast_id
                 file.write(json.dumps(event, ensure_ascii=False) + "\n")
@@ -143,7 +143,7 @@ class ForecastRun:
         actuals = actuals.loc[actuals.complete & actuals.valid_time.between(combined.valid_time.min(), combined.valid_time.max()),
                               ["valid_time", "turbine_id", "power_normalized"]]
         metric_path = ROOT / "artifacts/metrics.csv"
-        metrics = pd.read_csv(metric_path) if metric_path.exists() else pd.DataFrame(columns=METRIC_COLUMNS)
+        metrics = pd.read_csv(metric_path, encoding="utf-8-sig") if metric_path.exists() else pd.DataFrame(columns=METRIC_COLUMNS)
         write_csv(self.output / "forecasts.csv", combined)
         write_csv(self.output / "actuals.csv", actuals)
         write_csv(self.output / "metrics.csv", metrics)

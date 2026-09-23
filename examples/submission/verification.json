@@ -1,0 +1,35 @@
+{
+  "verified_at": "2026-09-23T09:51:41.673187Z",
+  "python": "3.14.7",
+  "platform": "Darwin",
+  "base_commit": "2c320ed",
+  "data_kind": "model_output",
+  "replay_rows": 2784,
+  "replay_versions": 29,
+  "day_ahead_rows": 1344,
+  "rows_per_turbine": {
+    "turbine_1": 672,
+    "turbine_2": 672
+  },
+  "period_start_utc": "2026-01-31T19:00:00Z",
+  "period_end_utc_exclusive": "2026-02-28T19:00:00Z",
+  "calendar_timezone": "Asia/Almaty",
+  "selection": "Horizons 25-48 from the preceding local midnight",
+  "export_sha256": "8d4f724659325eca55017c6c247d99c1dcd262ac9676ddff21c28668d339eaf2",
+  "checks": [
+    "Full replay accepted by dashboard loader",
+    "All 29 issuance download payloads contain 96 rows",
+    "Each turbine has all 672 February hours without duplicates",
+    "No February actuals invented",
+    "February predictions exactly match original backend replay",
+    "Fresh live OpenAI run published 96 rows matching the committed January example"
+  ],
+  "live_forecast_id": "20260109T1900Z-724f6cdb7431",
+  "warnings": [
+    "Raw timestamps assumed Asia/Almaty, interval starts; organizer confirmation pending.",
+    "Weather availability assumed initialization + 8 hours; historical publication provenance unverified.",
+    "Open-Meteo ECMWF IFS archive may contain hindcasts; as-issued compliance is not established.",
+    "Power is normalized, not MW/MWh; February actuals are absent from supplied data.",
+    "Weather: Open-Meteo (https://open-meteo.com/), ECMWF; CC BY 4.0 attribution."
+  ]
+}
