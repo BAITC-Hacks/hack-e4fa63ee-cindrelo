@@ -1,0 +1,20 @@
+{
+  "methods": [
+    "curve",
+    "multi_hist",
+    "multi_cat",
+    "multi_extra",
+    "multi_cat_live",
+    "multi_hist_live",
+    "gfs_cat",
+    "icon_cat",
+    "jma_cat",
+    "multi_wind"
+  ],
+  "selection": "December day-ahead MAE",
+  "january": "reused diagnostic; winner frozen before evaluation",
+  "target_mae_max": 0.05,
+  "provider_offset_hours": 72,
+  "exact_publication_unverified": true,
+  "training": "June-November for December; June-December for January"
+}

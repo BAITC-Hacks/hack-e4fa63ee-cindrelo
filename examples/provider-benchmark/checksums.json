@@ -1,0 +1,6 @@
+{
+  "src\\provider_weather.py": "9d89196baa94f6fb13c732cd13f686000495e0589f7ab24adbde5c2db31d4d82",
+  "src\\provider_benchmark.py": "48b41395c7f7bc9a0ba167f731a26b75a2d7e5d9e2b2092387d0f6d7d454a4a0",
+  "outputs\\provider-weather\\weather.csv": "9dfc2334ddd95d9291443e38e73574b7acef86ffd54b2cc3ab17aa734cb9dc1d",
+  "outputs\\provider-benchmark\\predictions.csv": "92cd86ce4d0424d2e4d526a77ca39dc914576a8219220c19e1dbba82b65a2c70"
+}

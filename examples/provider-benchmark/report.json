@@ -1,0 +1,42 @@
+{
+  "selected": "multi_wind",
+  "december_mae": {
+    "multi_wind": 0.20009658073694028,
+    "gfs_cat": 0.20239527632632254,
+    "multi_hist_live": 0.2043996395266378,
+    "multi_cat_live": 0.20575977670001477,
+    "multi_cat": 0.20715080970262836,
+    "multi_hist": 0.2096402099383551,
+    "icon_cat": 0.21352498490994698,
+    "multi_extra": 0.21461844851751458,
+    "jma_cat": 0.22138341312696613,
+    "curve": 0.22843968639513165
+  },
+  "january_mae": {
+    "icon_cat": 0.17408760903411688,
+    "multi_cat_live": 0.17415043172844188,
+    "jma_cat": 0.17568762840621424,
+    "curve": 0.17623531729487546,
+    "multi_cat": 0.17690023098215535,
+    "gfs_cat": 0.1814272345484159,
+    "multi_hist": 0.18330096073510752,
+    "multi_hist_live": 0.18601431349533556,
+    "multi_wind": 0.19067506965635425,
+    "multi_extra": 0.20533984322026164
+  },
+  "january31_mae": {
+    "jma_cat": 0.2831203939729992,
+    "multi_hist": 0.2867953594573487,
+    "multi_extra": 0.2964334067327543,
+    "multi_cat": 0.2972631432782644,
+    "icon_cat": 0.30539497198025994,
+    "curve": 0.3081401372628159,
+    "multi_hist_live": 0.3105603624729296,
+    "multi_cat_live": 0.3124038253739438,
+    "gfs_cat": 0.3147965753027281,
+    "multi_wind": 0.33051149038443095
+  },
+  "numerical_target_met_by": [],
+  "production_changed": false,
+  "publication_provenance_verified": false
+}
