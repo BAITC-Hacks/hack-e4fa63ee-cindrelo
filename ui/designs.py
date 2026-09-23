@@ -3,7 +3,7 @@ import streamlit as st
 
 from ui.data import ROOT
 
-PALETTE = ("#6046d7", "#919bb0", "#13796d", "#25304a", "#e5e8f1")
+PALETTE = ("#6554ad", "#8590a3", "#287e77", "#354052", "#e3e5ed")
 
 
 def apply_theme():
