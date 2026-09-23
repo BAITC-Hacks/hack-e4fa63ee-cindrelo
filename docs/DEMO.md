@@ -2,7 +2,7 @@
 
 This read-only dashboard displays the files defined in [TEAMMATE_SPEC.md](TEAMMATE_SPEC.md). The default fixture is synthetic: every number is invented for interface development. It is not a model result or measured validation performance.
 
-Use **Design version** at the top to compare three distinct interfaces: Horizon, Control room and Field report. See the [design comparison and screenshots](DESIGNS.md). Horizon is the default; all versions share the same data and calculations.
+The dashboard uses **Horizon**, the selected presentation design. Use the Forecast, Model comparison and Tool trace tabs. See the [Horizon design guide](DESIGNS.md).
 
 ## Start
 

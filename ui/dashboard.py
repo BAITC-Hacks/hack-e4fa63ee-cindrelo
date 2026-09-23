@@ -3,7 +3,7 @@ import streamlit as st
 import pandas as pd
 
 from ui.charts import forecast_chart
-from ui.designs import choose_design, masthead, summary_cards, chapter
+from ui.designs import apply_theme, masthead, summary_cards
 from ui.data import ArtifactError, ROOT, TURBINES, aligned_actuals, compare_forecasts, export_filename, export_forecast, forecast_choices, load_dashboard, output_directory, previous_issuances
 
 SYNTHETIC_BANNER = "SYNTHETIC DEMO DATA — not model results"
@@ -65,7 +65,7 @@ def show_events(events, forecast_id, synthetic):
 
 
 
-def show_forecast(data, selected, turbine, forecast_id, labels, synthetic, degraded, design):
+def show_forecast(data, selected, turbine, forecast_id, labels, synthetic, degraded):
     previous_choices = previous_issuances(data.forecasts, forecast_id)
     overlap = pd.DataFrame()
     if not previous_choices.empty:
@@ -77,11 +77,8 @@ def show_forecast(data, selected, turbine, forecast_id, labels, synthetic, degra
         overlap = compare_forecasts(selected, previous)
     actuals = aligned_actuals(selected, data.actuals, turbine)
     n_actuals = int(actuals.power_normalized.notna().sum())
-    if design == "Horizon":
-        with st.container(key="horizon_layout"):
-            chart_area, detail_area = st.columns([3, 1.2], gap="large")
-    else:
-        chart_area, detail_area = st.container(), st.container()
+    with st.container(key="horizon_layout"):
+        chart_area, detail_area = st.columns([3, 1.2], gap="large")
     with chart_area:
         with st.container(border=True):
             st.subheader("Hourly forecast")
@@ -90,7 +87,7 @@ def show_forecast(data, selected, turbine, forecast_id, labels, synthetic, degra
             show_previous = controls[0].checkbox("Show previous issuance", value=True, disabled=overlap.empty)
             show_actuals = controls[1].checkbox("Show actual power", value=True, disabled=n_actuals == 0)
             st.plotly_chart(forecast_chart(selected, synthetic=synthetic,
-                overlap=overlap if show_previous else None, actuals=actuals if show_actuals else None, design=design),
+                overlap=overlap if show_previous else None, actuals=actuals if show_actuals else None),
                 width="stretch", theme=None, config={"displaylogo": False, "scrollZoom": False}, key="forecast_chart")
             if overlap.empty:
                 st.info("No previous overlapping forecast")
@@ -108,7 +105,7 @@ def show_forecast(data, selected, turbine, forecast_id, labels, synthetic, degra
     with detail_area:
         with st.container(border=True):
             st.markdown("**Forecast details**")
-            columns = [st.container() for _ in range(4)] if design == "Horizon" else st.columns(4)
+            columns = [st.container() for _ in range(4)]
             values = [provenance_values(selected, "issued_at", timestamp=True), provenance_values(selected, "weather_run_time", timestamp=True), provenance_values(selected, "model_version"), "Degraded" if degraded else "OK"]
             for column, label, value in zip(columns, ["Forecast issue", "Weather run", "Model version", "Status"], values):
                 column.caption(label)
@@ -122,8 +119,7 @@ def show_forecast(data, selected, turbine, forecast_id, labels, synthetic, degra
 
 def main():
     st.set_page_config(page_title="Cindrelo — Wind power forecast", page_icon="🌬️", layout="wide")
-    design = choose_design()
-    workspace = st.sidebar.radio("Workspace", ["Forecast", "Model comparison", "Tool trace"], key="workspace") if design == "Control room" else None
+    apply_theme()
     try:
         directory = output_directory()
     except ArtifactError as exc:
@@ -139,7 +135,7 @@ def main():
             st.code(str(directory), language=None, wrap_lines=True)
         st.button("Refresh", width="stretch", help="Reload saved files only. No weather requests or model training.")
         st.caption("Refresh reloads saved artifacts. It does not run the forecasting pipeline.")
-    masthead(design)
+    masthead()
     st.caption("Cindrelo — Wind power forecast · Hourly normalized power for two wind turbines")
     try:
         data = load_dashboard(directory)
@@ -161,7 +157,7 @@ def main():
     # Retain valid selections across Refresh; a removed ID must not leave stale UI.
     if st.session_state.get("forecast_id") not in ids:
         st.session_state["forecast_id"] = ids[0]
-    columns = [st.sidebar, st.sidebar] if design == "Control room" else st.columns([1, 2])
+    columns = st.columns([1, 2])
     turbine = columns[0].selectbox("Turbine", list(TURBINES), format_func=TURBINES.get, key="turbine")
     forecast_id = columns[1].selectbox("Forecast issuance (UTC)", ids, format_func=labels.get, key="forecast_id")
     selected = data.forecasts[data.forecasts.forecast_id.eq(forecast_id) & data.forecasts.turbine_id.eq(turbine)].sort_values("valid_time")
@@ -180,33 +176,14 @@ def main():
             for event in unpublished.itertuples():
                 st.text(f"{event.forecast_id} · {utc(event.timestamp)} · {event.tool}: {event.message}")
 
-    summary_cards(selected, design)
+    summary_cards(selected)
     def forecast():
-        show_forecast(data, selected, turbine, forecast_id, labels, synthetic, degraded, design)
+        show_forecast(data, selected, turbine, forecast_id, labels, synthetic, degraded)
 
-    if design == "Control room":
-        section = workspace
-        st.caption("WORKSPACE / " + section.upper())
-        if section == "Forecast":
-            forecast()
-        elif section == "Model comparison":
-            show_metrics(data.metrics, turbine, synthetic)
-        else:
-            show_events(data.events, forecast_id, synthetic)
-    elif design == "Field report":
-        chapter("01", "The outlook", "Read the next 48 hours alongside observations and the preceding forecast.")
+    forecast_tab, metrics_tab, trace_tab = st.tabs(["Forecast", "Model comparison", "Tool trace"])
+    with forecast_tab:
         forecast()
-        chapter("02", "The evidence", "Compare supplied evaluation results within the same window and horizon.")
-        with st.expander("Read model and baseline comparison", expanded=True):
-            show_metrics(data.metrics, turbine, synthetic)
-        chapter("03", "The record", "Follow the saved events behind this published version.")
-        with st.expander("Read saved tool trace"):
-            show_events(data.events, forecast_id, synthetic)
-    else:
-        forecast_tab, metrics_tab, trace_tab = st.tabs(["Forecast", "Model comparison", "Tool trace"])
-        with forecast_tab:
-            forecast()
-        with metrics_tab:
-            show_metrics(data.metrics, turbine, synthetic)
-        with trace_tab:
-            show_events(data.events, forecast_id, synthetic)
+    with metrics_tab:
+        show_metrics(data.metrics, turbine, synthetic)
+    with trace_tab:
+        show_events(data.events, forecast_id, synthetic)

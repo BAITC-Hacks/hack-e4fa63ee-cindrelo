@@ -1,11 +1,11 @@
 """Figures in supplied normalized-power units; never infer turbine capacity."""
 import pandas as pd
 import plotly.graph_objects as go
-from ui.designs import PALETTES
+from ui.designs import PALETTE
 
 
-def forecast_chart(selected: pd.DataFrame, *, synthetic: bool, overlap: pd.DataFrame | None = None, actuals: pd.DataFrame | None = None, design: str = "Horizon") -> go.Figure:
-    forecast_color, previous_color, actual_color, text_color, grid_color = PALETTES[design]
+def forecast_chart(selected: pd.DataFrame, *, synthetic: bool, overlap: pd.DataFrame | None = None, actuals: pd.DataFrame | None = None) -> go.Figure:
+    forecast_color, previous_color, actual_color, text_color, grid_color = PALETTE
     selected = selected.sort_values("valid_time")
     figure = go.Figure(go.Scatter(
         x=selected.valid_time, y=selected.power_normalized,
@@ -27,10 +27,10 @@ def forecast_chart(selected: pd.DataFrame, *, synthetic: bool, overlap: pd.DataF
             hovertemplate="%{x|%d %b %Y, %H:%M} UTC<br>Normalized power: %{y:.3f}<extra>Actual power</extra>",
         ))
     figure.update_layout(
-        height=410 if design == "Field report" else 350, margin={"l": 5, "r": 10, "t": 35, "b": 5},
+        height=350, margin={"l": 5, "r": 10, "t": 35, "b": 5},
         title={"text": "Synthetic example · not model results" if synthetic else "Published forecast", "font": {"size": 13}},
-        font={"family": "Courier New, monospace" if design == "Control room" else "Arial, sans-serif", "color": text_color},
-        hoverlabel={"bgcolor": "#203246" if design == "Control room" else "#ffffff", "font_color": text_color},
+        font={"family": "Arial, sans-serif", "color": text_color},
+        hoverlabel={"bgcolor": "#ffffff", "font_color": text_color},
         paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
         hovermode="x unified", legend={"orientation": "h", "y": -.25, "x": 0},
         yaxis={"title": "Normalized power", "range": [0, 1], "dtick": .2, "gridcolor": grid_color, "fixedrange": True},
