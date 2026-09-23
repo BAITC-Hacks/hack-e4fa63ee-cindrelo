@@ -1,0 +1,22 @@
+[
+  {
+    "issue": "2025-08-05T19:00:00Z",
+    "reason": "{\"reason\":\"The requested model run is not available. Model: ecmwf_ifs, run: 2025-08-05T00:00Z\",\"error\":true}"
+  },
+  {
+    "issue": "2025-08-06T19:00:00Z",
+    "reason": "{\"error\":true,\"reason\":\"The requested model run is not available. Model: ecmwf_ifs, run: 2025-08-06T00:00Z\"}"
+  },
+  {
+    "issue": "2025-08-07T19:00:00Z",
+    "reason": "Weather does not cover the complete 48-hour horizon"
+  },
+  {
+    "issue": "2025-08-08T19:00:00Z",
+    "reason": "{\"reason\":\"The requested model run is not available. Model: ecmwf_ifs, run: 2025-08-08T00:00Z\",\"error\":true}"
+  },
+  {
+    "issue": "2025-08-09T19:00:00Z",
+    "reason": "{\"error\":true,\"reason\":\"The requested model run is not available. Model: ecmwf_ifs, run: 2025-08-09T00:00Z\"}"
+  }
+]

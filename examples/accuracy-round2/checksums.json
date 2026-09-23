@@ -1,0 +1,7 @@
+{
+  "src\\accuracy_round2.py": "4519869ef9fb785eaa6f5039628616321dc64ecea2f0336a622f634517cb4b1d",
+  "data\\hourly.csv": "0e89a1b8a35c30066934141d7e56c562450c3c59242c55e3dd51c8455aaf85d0",
+  "outputs\\accuracy-round2-final\\predictions.csv": "74106c36237dc898198e0df91aac449e9fe3af750695bc14f29d61c4dd4ac2c9",
+  "outputs\\accuracy-round2-extension-v2\\weather.csv": "61d22bfc9eb5932bf3eb5a2ae1bf27d13c7c9576f1b7f9c8121d9d5a84c9b015",
+  "outputs\\accuracy-round2-extension-v2\\predictions.csv": "d1ed648c60fde30ff66d5d6537560ee7005273fe208337279606925620c88a5e"
+}

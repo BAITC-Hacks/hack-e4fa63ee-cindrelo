@@ -1,0 +1,17 @@
+{
+  "2025-07-01": {
+    "cutoff": "2025-06-29T19:00:00Z",
+    "training_pairs": 2684,
+    "observations": 38242
+  },
+  "2025-08-01": {
+    "cutoff": "2025-07-30T19:00:00Z",
+    "training_pairs": 5628,
+    "observations": 39714
+  },
+  "2025-09-01": {
+    "cutoff": "2025-08-30T19:00:00Z",
+    "training_pairs": 8096,
+    "observations": 41188
+  }
+}

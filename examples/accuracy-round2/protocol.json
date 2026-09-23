@@ -1,0 +1,6 @@
+{
+  "selection": "lowest October-December day-ahead MAE",
+  "january": "reused exploratory diagnostic; no untouched holdout",
+  "deployment": "no automatic promotion",
+  "source_sha256": "99c8543190418f9a7cd021f042c4e15239c38fbcb7c185e549e9187aa563eabc"
+}
