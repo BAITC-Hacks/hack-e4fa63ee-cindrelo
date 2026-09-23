@@ -1,0 +1,8 @@
+{"forecast_id": "demo-1", "timestamp": "2026-01-10T00:00:00Z", "tool": "fetch_weather", "status": "completed", "message": "Synthetic event: fetch_weather example; no real tool executed."}
+{"forecast_id": "demo-1", "timestamp": "2026-01-10T00:00:01Z", "tool": "validate_inputs", "status": "completed", "message": "Synthetic event: validate_inputs example; no real tool executed."}
+{"forecast_id": "demo-1", "timestamp": "2026-01-10T00:00:02Z", "tool": "predict_power", "status": "completed", "message": "Synthetic event: predict_power example; no real tool executed."}
+{"forecast_id": "demo-1", "timestamp": "2026-01-10T00:00:03Z", "tool": "publish_forecast", "status": "completed", "message": "Synthetic event: publish_forecast example; no real tool executed."}
+{"forecast_id": "demo-2", "timestamp": "2026-01-11T00:00:00Z", "tool": "fetch_weather", "status": "completed", "message": "Synthetic event: fetch_weather example; no real tool executed."}
+{"forecast_id": "demo-2", "timestamp": "2026-01-11T00:00:01Z", "tool": "validate_inputs", "status": "warning", "message": "Synthetic event: cached-run fallback demonstrated."}
+{"forecast_id": "demo-2", "timestamp": "2026-01-11T00:00:02Z", "tool": "predict_power", "status": "completed", "message": "Synthetic event: predict_power example; no real tool executed."}
+{"forecast_id": "demo-2", "timestamp": "2026-01-11T00:00:03Z", "tool": "publish_forecast", "status": "completed", "message": "Synthetic event: publish_forecast example; no real tool executed."}
