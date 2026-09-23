@@ -27,13 +27,13 @@ def forecast_chart(selected: pd.DataFrame, *, synthetic: bool, overlap: pd.DataF
             hovertemplate="%{x|%d %b %Y, %H:%M} UTC<br>Normalized power: %{y:.3f}<extra>Actual power</extra>",
         ))
     figure.update_layout(
-        height=350, margin={"l": 5, "r": 10, "t": 35, "b": 5},
+        height=400, margin={"l": 65, "r": 15, "t": 45, "b": 90},
         title={"text": "Synthetic example · not model results" if synthetic else "Published forecast", "font": {"size": 13}},
         font={"family": "Arial, sans-serif", "color": text_color},
         hoverlabel={"bgcolor": "#ffffff", "font_color": text_color},
         paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
         hovermode="x unified", legend={"orientation": "h", "y": -.25, "x": 0},
-        yaxis={"title": "Normalized power", "range": [0, 1], "dtick": .2, "gridcolor": grid_color, "fixedrange": True},
-        xaxis={"title": "Target interval start (UTC)", "tickformat": "%d %b\n%H:%M", "showgrid": False},
+        yaxis={"title": "Normalized power", "range": [0, 1], "dtick": .2, "gridcolor": grid_color, "fixedrange": True, "automargin": True},
+        xaxis={"title": "Target interval start (UTC)", "tickformat": "%d %b\n%H:%M", "showgrid": False, "automargin": True},
     )
     return figure

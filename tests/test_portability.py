@@ -51,7 +51,19 @@ def test_demo_reproduces_and_deduplicates_with_windows_default(tmp_path, monkeyp
     directory = tmp_path / "outputs/offline-demo"
     actual = load_dashboard(directory)
     expected = load_dashboard(ROOT / "examples/dashboard")
-    pd.testing.assert_frame_equal(actual.original_forecasts, expected.original_forecasts)
+    # NumPy interpolation/CSV formatting can differ by a final binary rounding
+    # bit between Windows x64 and macOS ARM64. Keep identifiers, timestamps and
+    # all other original fields exact; compare only power numerically. The
+    # repeat-run byte assertion below still requires identical local exports.
+    pd.testing.assert_frame_equal(
+        actual.original_forecasts.drop(columns="power_normalized"),
+        expected.original_forecasts.drop(columns="power_normalized"),
+    )
+    pd.testing.assert_series_equal(
+        actual.original_forecasts.power_normalized.astype(float),
+        expected.original_forecasts.power_normalized.astype(float),
+        check_exact=False, rtol=0, atol=1e-14,
+    )
     pd.testing.assert_frame_equal(actual.actuals, expected.actuals)
     pd.testing.assert_frame_equal(actual.metrics, expected.metrics)
     metadata_path = tmp_path / "data/preparation.json"
