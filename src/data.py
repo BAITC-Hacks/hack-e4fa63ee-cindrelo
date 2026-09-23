@@ -38,7 +38,7 @@ def prepare(cfg):
         paths = list((ROOT / "docs").glob(info["file_glob"]))
         if len(paths) != 1:
             raise ValueError(f"Expected one source CSV for {turbine}, found {paths}")
-        raw = pd.read_csv(paths[0])
+        raw = pd.read_csv(paths[0], encoding="utf-8-sig")
         hourly, ambiguous = aggregate(raw, cfg["raw_timezone"])
         hourly["turbine_id"] = turbine
         frames.append(hourly)
@@ -57,8 +57,8 @@ def load_hourly(cfg):
     metadata = ROOT / "data/preparation.json"
     if metadata.exists():
         import json
-        if json.loads(metadata.read_text())["config_hash"] == digest(cfg):
-            data = pd.read_csv(ROOT / "data/hourly.csv")
+        if json.loads(metadata.read_text(encoding="utf-8-sig"))["config_hash"] == digest(cfg):
+            data = pd.read_csv(ROOT / "data/hourly.csv", encoding="utf-8-sig")
             data["valid_time"] = pd.to_datetime(data.valid_time, utc=True)
             return data
     return prepare(cfg)[0]

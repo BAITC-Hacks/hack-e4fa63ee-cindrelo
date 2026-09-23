@@ -37,7 +37,7 @@ def main():
         from .pipeline import ForecastRun, run_deterministic
         from .weather import Weather
         source = ROOT / "examples/backend"
-        bundle = json.loads((source / "curve.json").read_text())
+        bundle = json.loads((source / "curve.json").read_text(encoding="utf-8-sig"))
         output = Path(args.output)
         if not output.is_absolute():
             output = ROOT / output
