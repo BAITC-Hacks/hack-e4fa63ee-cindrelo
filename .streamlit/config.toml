@@ -2,13 +2,14 @@
 # macOS/browser dark-mode preferences cannot produce white text on light cards.
 [theme]
 base = "light"
-primaryColor = "#6046d7"
-backgroundColor = "#f5f6fb"
+font = '"Segoe UI", "Helvetica Neue", Arial, sans-serif'
+primaryColor = "#6554ad"
+backgroundColor = "#f7f8fb"
 secondaryBackgroundColor = "#ffffff"
-textColor = "#25304a"
-borderColor = "#e5e8f1"
+textColor = "#354052"
+borderColor = "#e3e5ed"
 
 [theme.sidebar]
 backgroundColor = "#ffffff"
-secondaryBackgroundColor = "#f5f6fb"
-textColor = "#25304a"
+secondaryBackgroundColor = "#f7f8fb"
+textColor = "#354052"
