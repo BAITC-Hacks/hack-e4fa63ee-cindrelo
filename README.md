@@ -6,6 +6,8 @@ Hourly normalized-power forecasts for two wind turbines, driven by archived weat
 
 **Limitations:** source timezone and interval convention are assumed; weather publication delay is assumed; the archive's historical as-issued provenance is unverified. Forecasts carry `degraded` status and visible warnings. February has no supplied observations, so no February accuracy is claimed.
 
+![Dashboard](assets/image.png)
+
 ## Quick start
 
 Tested with Python 3.14.7 on macOS ARM64. Run from the repository root:
@@ -49,6 +51,7 @@ Live mode rechecks external weather on every run. Each weather request has one a
 Completed dashboard runs are immutable snapshots under `outputs/dashboard-runs/<session>/snapshot-<id>/`. The UI selects a snapshot only after the entire requested cycle succeeds; a failed revision keeps the previous view. Committed examples are preserved. The cycle runs on demand, with a simulated update; there is no background scheduler.
 
 <a id="windows-powershell-enable-utf-8"></a>
+
 ### Windows PowerShell
 
 Backend files are explicitly read as UTF-8 (with optional BOM) and written as UTF-8. `-X utf8` is no longer required for backend file handling. This fixes the spurious weather-cache checksum mismatch caused by Windows legacy encodings; checksum validation remains enabled and the bundled hashes are unchanged. The regression suite exercises a clean demo under a simulated Windows `cp1252` file default, including Cyrillic source metadata, degree-symbol weather units, Unicode event messages and repeat-run deduplication. The fix was tested on macOS; the earlier Windows/Python 3.12 integration used the documented UTF-8 workaround.
@@ -111,12 +114,12 @@ Model selection used December 2025 only. The empirical curve's December MAE was 
 
 January 2026 holdout, both turbines and horizons pooled; 2,928 identical scored forecast/target pairs per model:
 
-| Model | MAE, normalized power |
-|---|---:|
-| **Empirical curve, selected** | **0.1669** |
-| CatBoost | 0.2087 |
-| Training mean | 0.3023 |
-| Last-known-power persistence | 0.3340 |
+| Model                         | MAE, normalized power |
+| ----------------------------- | --------------------: |
+| **Empirical curve, selected** |            **0.1669** |
+| CatBoost                      |                0.2087 |
+| Training mean                 |                0.3023 |
+| Last-known-power persistence  |                0.3340 |
 
 Detailed per-turbine/horizon MAE, RMSE and sample counts are in [the measured metrics](examples/dashboard/metrics.csv). These results are conditional on the documented timezone and archive assumptions. They do not establish operational forecast accuracy or February performance.
 
