@@ -1,0 +1,1 @@
+month,turbine_id,model,variable,offset_days,native_field_expected,expected_hours,non_null,missing,gap_start,gap_last_hour,gap_hours

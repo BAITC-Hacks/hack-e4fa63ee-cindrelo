@@ -1,0 +1,6 @@
+{
+  "src/spatial_weather_benchmark.py": "3d5e9bf257c5f3103c32613b012f4a956241608c942e4cf6aebff28ecf9ad89f",
+  "tests/test_spatial_weather_benchmark.py": "25f6fcc5fa13458e02f29bbab6ba00c55b62d4aa95318fe5ff5fd26f24a65e94",
+  "outputs/spatial-weather/weather.csv": "77efa8388bc47bc53824e6fe52b1bd241ab60561063a028b583a63ecaee4eb00",
+  "outputs/spatial-weather-benchmark/predictions.csv": "0d2efa1e45b255ab1379035f5e54e2c4f44c4fca3a64796a5a9accac96e3c97c"
+}

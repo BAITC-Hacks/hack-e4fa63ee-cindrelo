@@ -1,0 +1,356 @@
+{
+  "fits": [
+    {
+      "fold": "2025-12",
+      "fit_cutoff": "2025-11-29T19:00:00Z",
+      "train_rows": 8272,
+      "observed_rows": 45436,
+      "max_training_valid_time": "2025-11-29T16:00:00Z",
+      "max_training_available_time": "2025-11-29T19:00:00Z",
+      "target_rows": 48,
+      "first_target": "2025-11-30T19:00:00Z",
+      "last_target": "2025-12-01T18:00:00Z",
+      "models": [
+        {
+          "method": "no_extra_cat",
+          "feature_count": 77,
+          "dropped_all_null_training_features": [
+            "provider_wind_speed_100m_jma_gsm",
+            "provider_wind_speed_100m_jma_gsm_shift-6",
+            "provider_wind_speed_100m_jma_gsm_shift-3",
+            "provider_wind_speed_100m_jma_gsm_shift3",
+            "provider_wind_speed_100m_jma_gsm_shift6",
+            "provider_wind_speed_100m_jma_gsm_day_mean",
+            "provider_wind_speed_100m_jma_gsm_day_std"
+          ],
+          "train_rows": 8272,
+          "target": "power"
+        },
+        {
+          "method": "add_cat",
+          "feature_count": 135,
+          "dropped_all_null_training_features": [
+            "provider_wind_speed_100m_jma_gsm",
+            "provider_wind_speed_100m_jma_gsm_shift-6",
+            "provider_wind_speed_100m_jma_gsm_shift-3",
+            "provider_wind_speed_100m_jma_gsm_shift3",
+            "provider_wind_speed_100m_jma_gsm_shift6",
+            "provider_wind_speed_100m_jma_gsm_day_mean",
+            "provider_wind_speed_100m_jma_gsm_day_std"
+          ],
+          "train_rows": 8272,
+          "target": "power"
+        },
+        {
+          "method": "add_hist",
+          "feature_count": 135,
+          "dropped_all_null_training_features": [
+            "provider_wind_speed_100m_jma_gsm",
+            "provider_wind_speed_100m_jma_gsm_shift-6",
+            "provider_wind_speed_100m_jma_gsm_shift-3",
+            "provider_wind_speed_100m_jma_gsm_shift3",
+            "provider_wind_speed_100m_jma_gsm_shift6",
+            "provider_wind_speed_100m_jma_gsm_day_mean",
+            "provider_wind_speed_100m_jma_gsm_day_std"
+          ],
+          "train_rows": 8272,
+          "target": "power"
+        },
+        {
+          "method": "add_cat_live",
+          "feature_count": 139,
+          "dropped_all_null_training_features": [
+            "provider_wind_speed_100m_jma_gsm",
+            "provider_wind_speed_100m_jma_gsm_shift-6",
+            "provider_wind_speed_100m_jma_gsm_shift-3",
+            "provider_wind_speed_100m_jma_gsm_shift3",
+            "provider_wind_speed_100m_jma_gsm_shift6",
+            "provider_wind_speed_100m_jma_gsm_day_mean",
+            "provider_wind_speed_100m_jma_gsm_day_std"
+          ],
+          "train_rows": 8272,
+          "target": "power"
+        },
+        {
+          "method": "add_wind_cat",
+          "feature_count": 131,
+          "dropped_all_null_training_features": [
+            "provider_wind_speed_100m_jma_gsm",
+            "provider_wind_speed_100m_jma_gsm_shift-6",
+            "provider_wind_speed_100m_jma_gsm_shift-3",
+            "provider_wind_speed_100m_jma_gsm_shift3",
+            "provider_wind_speed_100m_jma_gsm_shift6",
+            "provider_wind_speed_100m_jma_gsm_day_mean",
+            "provider_wind_speed_100m_jma_gsm_day_std"
+          ],
+          "train_rows": 8272,
+          "target": "measured_wind_then_curve"
+        }
+      ]
+    },
+    {
+      "fold": "2025-12",
+      "fit_cutoff": "2025-11-30T19:00:00Z",
+      "train_rows": 8320,
+      "observed_rows": 45484,
+      "max_training_valid_time": "2025-11-30T16:00:00Z",
+      "max_training_available_time": "2025-11-30T19:00:00Z",
+      "target_rows": 1426,
+      "first_target": "2025-12-01T19:00:00Z",
+      "last_target": "2025-12-31T18:00:00Z",
+      "models": [
+        {
+          "method": "no_extra_cat",
+          "feature_count": 77,
+          "dropped_all_null_training_features": [
+            "provider_wind_speed_100m_jma_gsm",
+            "provider_wind_speed_100m_jma_gsm_shift-6",
+            "provider_wind_speed_100m_jma_gsm_shift-3",
+            "provider_wind_speed_100m_jma_gsm_shift3",
+            "provider_wind_speed_100m_jma_gsm_shift6",
+            "provider_wind_speed_100m_jma_gsm_day_mean",
+            "provider_wind_speed_100m_jma_gsm_day_std"
+          ],
+          "train_rows": 8320,
+          "target": "power"
+        },
+        {
+          "method": "add_cat",
+          "feature_count": 135,
+          "dropped_all_null_training_features": [
+            "provider_wind_speed_100m_jma_gsm",
+            "provider_wind_speed_100m_jma_gsm_shift-6",
+            "provider_wind_speed_100m_jma_gsm_shift-3",
+            "provider_wind_speed_100m_jma_gsm_shift3",
+            "provider_wind_speed_100m_jma_gsm_shift6",
+            "provider_wind_speed_100m_jma_gsm_day_mean",
+            "provider_wind_speed_100m_jma_gsm_day_std"
+          ],
+          "train_rows": 8320,
+          "target": "power"
+        },
+        {
+          "method": "add_hist",
+          "feature_count": 135,
+          "dropped_all_null_training_features": [
+            "provider_wind_speed_100m_jma_gsm",
+            "provider_wind_speed_100m_jma_gsm_shift-6",
+            "provider_wind_speed_100m_jma_gsm_shift-3",
+            "provider_wind_speed_100m_jma_gsm_shift3",
+            "provider_wind_speed_100m_jma_gsm_shift6",
+            "provider_wind_speed_100m_jma_gsm_day_mean",
+            "provider_wind_speed_100m_jma_gsm_day_std"
+          ],
+          "train_rows": 8320,
+          "target": "power"
+        },
+        {
+          "method": "add_cat_live",
+          "feature_count": 139,
+          "dropped_all_null_training_features": [
+            "provider_wind_speed_100m_jma_gsm",
+            "provider_wind_speed_100m_jma_gsm_shift-6",
+            "provider_wind_speed_100m_jma_gsm_shift-3",
+            "provider_wind_speed_100m_jma_gsm_shift3",
+            "provider_wind_speed_100m_jma_gsm_shift6",
+            "provider_wind_speed_100m_jma_gsm_day_mean",
+            "provider_wind_speed_100m_jma_gsm_day_std"
+          ],
+          "train_rows": 8320,
+          "target": "power"
+        },
+        {
+          "method": "add_wind_cat",
+          "feature_count": 131,
+          "dropped_all_null_training_features": [
+            "provider_wind_speed_100m_jma_gsm",
+            "provider_wind_speed_100m_jma_gsm_shift-6",
+            "provider_wind_speed_100m_jma_gsm_shift-3",
+            "provider_wind_speed_100m_jma_gsm_shift3",
+            "provider_wind_speed_100m_jma_gsm_shift6",
+            "provider_wind_speed_100m_jma_gsm_day_mean",
+            "provider_wind_speed_100m_jma_gsm_day_std"
+          ],
+          "train_rows": 8320,
+          "target": "measured_wind_then_curve"
+        }
+      ]
+    },
+    {
+      "fold": "2026-01",
+      "fit_cutoff": "2025-12-30T19:00:00Z",
+      "train_rows": 9746,
+      "observed_rows": 46910,
+      "max_training_valid_time": "2025-12-30T16:00:00Z",
+      "max_training_available_time": "2025-12-30T19:00:00Z",
+      "target_rows": 48,
+      "first_target": "2025-12-31T19:00:00Z",
+      "last_target": "2026-01-01T18:00:00Z",
+      "models": [
+        {
+          "method": "no_extra_cat",
+          "feature_count": 77,
+          "dropped_all_null_training_features": [
+            "provider_wind_speed_100m_jma_gsm",
+            "provider_wind_speed_100m_jma_gsm_shift-6",
+            "provider_wind_speed_100m_jma_gsm_shift-3",
+            "provider_wind_speed_100m_jma_gsm_shift3",
+            "provider_wind_speed_100m_jma_gsm_shift6",
+            "provider_wind_speed_100m_jma_gsm_day_mean",
+            "provider_wind_speed_100m_jma_gsm_day_std"
+          ],
+          "train_rows": 9746,
+          "target": "power"
+        },
+        {
+          "method": "add_cat",
+          "feature_count": 135,
+          "dropped_all_null_training_features": [
+            "provider_wind_speed_100m_jma_gsm",
+            "provider_wind_speed_100m_jma_gsm_shift-6",
+            "provider_wind_speed_100m_jma_gsm_shift-3",
+            "provider_wind_speed_100m_jma_gsm_shift3",
+            "provider_wind_speed_100m_jma_gsm_shift6",
+            "provider_wind_speed_100m_jma_gsm_day_mean",
+            "provider_wind_speed_100m_jma_gsm_day_std"
+          ],
+          "train_rows": 9746,
+          "target": "power"
+        },
+        {
+          "method": "add_hist",
+          "feature_count": 135,
+          "dropped_all_null_training_features": [
+            "provider_wind_speed_100m_jma_gsm",
+            "provider_wind_speed_100m_jma_gsm_shift-6",
+            "provider_wind_speed_100m_jma_gsm_shift-3",
+            "provider_wind_speed_100m_jma_gsm_shift3",
+            "provider_wind_speed_100m_jma_gsm_shift6",
+            "provider_wind_speed_100m_jma_gsm_day_mean",
+            "provider_wind_speed_100m_jma_gsm_day_std"
+          ],
+          "train_rows": 9746,
+          "target": "power"
+        },
+        {
+          "method": "add_cat_live",
+          "feature_count": 139,
+          "dropped_all_null_training_features": [
+            "provider_wind_speed_100m_jma_gsm",
+            "provider_wind_speed_100m_jma_gsm_shift-6",
+            "provider_wind_speed_100m_jma_gsm_shift-3",
+            "provider_wind_speed_100m_jma_gsm_shift3",
+            "provider_wind_speed_100m_jma_gsm_shift6",
+            "provider_wind_speed_100m_jma_gsm_day_mean",
+            "provider_wind_speed_100m_jma_gsm_day_std"
+          ],
+          "train_rows": 9746,
+          "target": "power"
+        },
+        {
+          "method": "add_wind_cat",
+          "feature_count": 131,
+          "dropped_all_null_training_features": [
+            "provider_wind_speed_100m_jma_gsm",
+            "provider_wind_speed_100m_jma_gsm_shift-6",
+            "provider_wind_speed_100m_jma_gsm_shift-3",
+            "provider_wind_speed_100m_jma_gsm_shift3",
+            "provider_wind_speed_100m_jma_gsm_shift6",
+            "provider_wind_speed_100m_jma_gsm_day_mean",
+            "provider_wind_speed_100m_jma_gsm_day_std"
+          ],
+          "train_rows": 9746,
+          "target": "measured_wind_then_curve"
+        }
+      ]
+    },
+    {
+      "fold": "2026-01",
+      "fit_cutoff": "2025-12-31T19:00:00Z",
+      "train_rows": 9794,
+      "observed_rows": 46958,
+      "max_training_valid_time": "2025-12-31T16:00:00Z",
+      "max_training_available_time": "2025-12-31T19:00:00Z",
+      "target_rows": 1440,
+      "first_target": "2026-01-01T19:00:00Z",
+      "last_target": "2026-01-31T18:00:00Z",
+      "models": [
+        {
+          "method": "no_extra_cat",
+          "feature_count": 77,
+          "dropped_all_null_training_features": [
+            "provider_wind_speed_100m_jma_gsm",
+            "provider_wind_speed_100m_jma_gsm_shift-6",
+            "provider_wind_speed_100m_jma_gsm_shift-3",
+            "provider_wind_speed_100m_jma_gsm_shift3",
+            "provider_wind_speed_100m_jma_gsm_shift6",
+            "provider_wind_speed_100m_jma_gsm_day_mean",
+            "provider_wind_speed_100m_jma_gsm_day_std"
+          ],
+          "train_rows": 9794,
+          "target": "power"
+        },
+        {
+          "method": "add_cat",
+          "feature_count": 135,
+          "dropped_all_null_training_features": [
+            "provider_wind_speed_100m_jma_gsm",
+            "provider_wind_speed_100m_jma_gsm_shift-6",
+            "provider_wind_speed_100m_jma_gsm_shift-3",
+            "provider_wind_speed_100m_jma_gsm_shift3",
+            "provider_wind_speed_100m_jma_gsm_shift6",
+            "provider_wind_speed_100m_jma_gsm_day_mean",
+            "provider_wind_speed_100m_jma_gsm_day_std"
+          ],
+          "train_rows": 9794,
+          "target": "power"
+        },
+        {
+          "method": "add_hist",
+          "feature_count": 135,
+          "dropped_all_null_training_features": [
+            "provider_wind_speed_100m_jma_gsm",
+            "provider_wind_speed_100m_jma_gsm_shift-6",
+            "provider_wind_speed_100m_jma_gsm_shift-3",
+            "provider_wind_speed_100m_jma_gsm_shift3",
+            "provider_wind_speed_100m_jma_gsm_shift6",
+            "provider_wind_speed_100m_jma_gsm_day_mean",
+            "provider_wind_speed_100m_jma_gsm_day_std"
+          ],
+          "train_rows": 9794,
+          "target": "power"
+        },
+        {
+          "method": "add_cat_live",
+          "feature_count": 139,
+          "dropped_all_null_training_features": [
+            "provider_wind_speed_100m_jma_gsm",
+            "provider_wind_speed_100m_jma_gsm_shift-6",
+            "provider_wind_speed_100m_jma_gsm_shift-3",
+            "provider_wind_speed_100m_jma_gsm_shift3",
+            "provider_wind_speed_100m_jma_gsm_shift6",
+            "provider_wind_speed_100m_jma_gsm_day_mean",
+            "provider_wind_speed_100m_jma_gsm_day_std"
+          ],
+          "train_rows": 9794,
+          "target": "power"
+        },
+        {
+          "method": "add_wind_cat",
+          "feature_count": 131,
+          "dropped_all_null_training_features": [
+            "provider_wind_speed_100m_jma_gsm",
+            "provider_wind_speed_100m_jma_gsm_shift-6",
+            "provider_wind_speed_100m_jma_gsm_shift-3",
+            "provider_wind_speed_100m_jma_gsm_shift3",
+            "provider_wind_speed_100m_jma_gsm_shift6",
+            "provider_wind_speed_100m_jma_gsm_day_mean",
+            "provider_wind_speed_100m_jma_gsm_day_std"
+          ],
+          "train_rows": 9794,
+          "target": "measured_wind_then_curve"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "recipes": {
+    "curve": null,
+    "run_bias12_0.25": [
+      12,
+      0.25
+    ],
+    "run_bias12_0.5": [
+      12,
+      0.5
+    ],
+    "run_bias12_1.0": [
+      12,
+      1.0
+    ],
+    "run_bias18_0.25": [
+      18,
+      0.25
+    ],
+    "run_bias18_0.5": [
+      18,
+      0.5
+    ],
+    "run_bias18_1.0": [
+      18,
+      1.0
+    ]
+  },
+  "selection": "December 1-29, saved before January evaluation",
+  "reporting_delay_hours_after_interval_end": 2,
+  "weather_delay_assumption_hours": 8,
+  "bias_source": "Past forecast values of the same eligible ECMWF run used for the target forecast",
+  "minimum_history_pairs": 6,
+  "maximum_observation_age_after_interval_end_hours": 5,
+  "bias_clip_ms": 4,
+  "damping": "exp(-(horizon_hours-1)/48)",
+  "scope": "Full January1-31 and January31; horizons25-48; separate earlier boundary fit",
+  "january": "Reused research diagnostic; no January fitting or recipe selection",
+  "publication_provenance_verified": false,
+  "production_changed": false,
+  "source_sha256": "4357e9e525b74491a50d1afb27b51d9cda533a3f2d7d547af6f0cb10e688eacc"
+}

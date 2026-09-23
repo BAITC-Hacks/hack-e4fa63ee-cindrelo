@@ -1,0 +1,34 @@
+{
+  "source_sha256": "3935ae09f83b0befd5b65a3b3093261f882751aad64337a280f1fea5285ff972",
+  "input_sha256": {
+    "config.json": "af3f539fa9c9ec89a3522df66489dbf68d0b47440bad8499fb03670c3004a37f",
+    "src/fresh_provider_benchmark.py": "57c55139c8c855b07c14d75a61926b6f07610934ea149aa6664440eec361a9df",
+    "src/accuracy.py": "b865e272d50f28fc3f83577c8d6a0f1809191614f67feb4ee910d6fc0480aa90",
+    "src/live_bias.py": "9b93942c123da8cf64d657e9a1be8a664c7dc9ec7aae27dc2a00097cf807d569",
+    "src/weather_calibration.py": "3e0bcfd01dc2e85eb55bb50324c53c87d72d51f0405f2ec7301410059367ac85",
+    "src/model.py": "6613e0a837b57689b90c1a34a46e9ced17775aad32fb109dadc5a0339aeb6763",
+    "src/common.py": "c88f955cb11d6f60ea3b1fa2284993b33c512e3b47469fc0eeb0a2c119aae265",
+    "src/provider_weather.py": "3ffdfb70eb85a5e4080768de840cb18656fa6a88dbe9ff341916368b0065b735",
+    "data/hourly.csv": "0e89a1b8a35c30066934141d7e56c562450c3c59242c55e3dd51c8455aaf85d0",
+    "data/preparation.json": "472d76db361b67a4c886026edfd963072ff83c1878a8944c51361ced789b594d",
+    "outputs/accuracy-round2-extension-v2/weather.csv": "61d22bfc9eb5932bf3eb5a2ae1bf27d13c7c9576f1b7f9c8121d9d5a84c9b015",
+    "outputs/accuracy/weather.csv": "54f987b667d9e0c5338dd391403ef467a73f3ced014e37630f2771b4cfc8fd47",
+    "outputs/provider-weather-day2/weather.csv": "f7101346c095c50e594c419c9601d88e19c09ac4673a349d8eef845aae8d30e9",
+    "outputs/provider-weather/weather.csv": "9dfc2334ddd95d9291443e38e73574b7acef86ffd54b2cc3ab17aa734cb9dc1d"
+  },
+  "output_sha256": {
+    "additional_weather.csv": "7da91c34e0b835ddf1b6c635671805ce457077ec59805da8f0aa7ff71fc0d4dc",
+    "archive_missing_ranges.csv": "679f233d51e277629f3ab5dd1c00fa4da2c5998a358b4f2af693c322349c1956",
+    "archive_missingness.csv": "072f8d36151f36cd624fab9ed26a7a4a30b4532fe17b4b57abb745d8e3bea9e9",
+    "archive_provenance.json": "0cabd9f1996b2dcbe12be6e82a2a549c01a71df17d9ccfec153e130a9e2218d0",
+    "comparisons.csv": "36ba13f93e5db5d477985141488afa9ec5728851187953971198c19bbbe61753",
+    "december_predictions.csv": "2822d046fd723e596142db7bf0e501e1a294419d99373a60681007e4f73ac5ef",
+    "fit_audit.json": "cb138c30fa2c75d391f221c8518d8e597bf388c2592b4512ff896c132ed32cc7",
+    "metrics.csv": "90934ed0a3cb4a442979dbc09f99c2a835d059d2ca4a07aa0e7a3aae33c24e0b",
+    "predictions.csv": "6ba54e06d4170ebd5e9d2537a8d3d80ab4b0cadfae0483bee8bb032ff8d6eb2e",
+    "protocol.json": "4a2b5e28ef66628781e066bb8c0369b050a45f368b6177fb4046cbb0660d5a9c",
+    "report.json": "3487811ad5a2a5efd0900cf5ec4d591c3d64faf590e2f04de88749b330b6e9bf",
+    "selected_feature_missingness.csv": "d676cd27ff81bb5e48c676360b5c0df0193462cd7116e133a5c38e8c832d3f7c",
+    "selection.json": "668fe31d3f9392a631533a9ef94f2a5e9b17b20bb819ef6987ac0d94ee47a501"
+  }
+}

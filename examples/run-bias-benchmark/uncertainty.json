@@ -1,0 +1,20 @@
+{
+  "candidate": "run_bias12_1.0",
+  "scope": "Full January; exploratory reused evaluation",
+  "jan31_inference": "One target day; no independent day-level significance inference",
+  "absolute_mae_gain": -0.009026753871930426,
+  "block_day_95pct_intervals": {
+    "1": [
+      -0.02299073312797914,
+      0.004300427510401752
+    ],
+    "3": [
+      -0.019964124132857367,
+      0.0019399070045816114
+    ],
+    "7": [
+      -0.01676090654514815,
+      -0.0013728810626611526
+    ]
+  }
+}
