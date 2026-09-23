@@ -31,7 +31,7 @@ class Weather:
                   "hourly": ",".join(VARIABLES), "wind_speed_unit": "ms", "forecast_days": 4}
         path = self.cache_dir / (digest(params) + ".json")
         if path.exists():
-            envelope = json.loads(path.read_text())
+            envelope = json.loads(path.read_text(encoding="utf-8-sig"))
             if envelope["content_hash"] != digest(envelope["response"]):
                 raise ValueError(f"Weather cache checksum mismatch: {path.name}")
             return envelope

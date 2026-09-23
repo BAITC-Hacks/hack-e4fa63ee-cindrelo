@@ -30,32 +30,31 @@ CINDRELO_OUTPUT_DIR=outputs/offline-demo streamlit run app.py
 
 `docs/fixtures/dashboard/` remains synthetic UI test data. `examples/dashboard/` contains model results. Both follow [the same contract](docs/TEAMMATE_SPEC.md).
 
-### Windows PowerShell: enable UTF-8
+<a id="windows-powershell-enable-utf-8"></a>
+### Windows PowerShell
 
-Verified with Python 3.12 on Windows. Backend text-file reads and writes currently use the system default encoding. On Windows installations where that default is not UTF-8, the bundled weather JSON can be decoded incorrectly and raise `Weather cache checksum mismatch`, followed by an unavailable older-cache error. Previously generated metadata can also fail to decode. The cache files are valid UTF-8; do not disable checksum validation or change their hashes.
-
-Run Python with `-X utf8` consistently for backend commands and the dashboard. This option must precede `-m`:
+Backend files are explicitly read as UTF-8 (with optional BOM) and written as UTF-8. `-X utf8` is no longer required for backend file handling. This fixes the spurious weather-cache checksum mismatch caused by Windows legacy encodings; checksum validation remains enabled and the bundled hashes are unchanged. The regression suite exercises a clean demo under a simulated Windows `cp1252` file default, including Cyrillic source metadata, degree-symbol weather units, Unicode event messages and repeat-run deduplication. The fix was tested on macOS; the earlier Windows/Python 3.12 integration used the documented UTF-8 workaround.
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -r requirements-backend.txt -r requirements-ui.txt
-.\.venv\Scripts\python.exe -X utf8 -m src demo
+.\.venv\Scripts\python.exe -m src demo
 $env:CINDRELO_OUTPUT_DIR = "outputs/offline-demo"
-.\.venv\Scripts\python.exe -X utf8 -m streamlit run app.py --browser.gatherUsageStats false
+.\.venv\Scripts\python.exe -m streamlit run app.py --browser.gatherUsageStats false
 ```
 
-To view the committed live-agent examples instead, set `$env:CINDRELO_OUTPUT_DIR = "examples/dashboard"` before starting Streamlit. The offline demo uses the deterministic controller; its new events do not represent a live OpenAI run.
+To view the committed live-agent examples instead, set `$env:CINDRELO_OUTPUT_DIR = "examples/dashboard"`. Offline regeneration uses the deterministic controller; its events do not represent a live OpenAI run.
 
-If an earlier run already wrote metadata with the Windows default encoding, regenerate preparation metadata and use a fresh output directory:
+**Recovery for artifacts created before the fix:** if a previous run wrote metadata or events using a Windows legacy encoding, regenerate preparation metadata and use a fresh output directory. Changing the file-handling code cannot repair already misencoded files. Do not disable weather-cache validation or change bundled hashes.
 
 ```powershell
-.\.venv\Scripts\python.exe -X utf8 -m src prepare
-.\.venv\Scripts\python.exe -X utf8 -m src demo --output outputs/offline-demo-utf8
+.\.venv\Scripts\python.exe -m src prepare
+.\.venv\Scripts\python.exe -m src demo --output outputs/offline-demo-utf8
 $env:CINDRELO_OUTPUT_DIR = "outputs/offline-demo-utf8"
-.\.venv\Scripts\python.exe -X utf8 -m streamlit run app.py --browser.gatherUsageStats false
+.\.venv\Scripts\python.exe -m streamlit run app.py --browser.gatherUsageStats false
 ```
 
-Apply `-X utf8` to the training, replay, agent and test commands below as well. Explicit `encoding="utf-8"` throughout backend file handling remains a follow-up improvement. For the walkthrough and integration rehearsal results, see [the demo guide](docs/DEMO.md).
+See [the demo guide](docs/DEMO.md) for the walkthrough and original integration rehearsal, and [the backend follow-up](docs/BACKEND_VERIFICATION.md) for the fixes and repeated checks after PR #6.
 
 ## Train and replay the full period
 
@@ -68,6 +67,8 @@ python -m src replay
 Training downloads daily single-run forecasts for September 2025–January 2026 at both coordinates, caches them under `data/weather/`, and fits three temporally separated model bundles. Requests have bounded retries. Re-running uses the cache. `python -m src train --offline` reproduces training after that cache exists.
 
 Replay covers local daily origins January 31–February 28. It writes 2,784 forecast rows (29 origins × 48 hours × 2 turbines) to `outputs/dashboard/forecasts.csv`. `february_day_ahead.csv` contains exactly 1,344 rows: February's 672 hours per turbine. It always selects horizons 25–48 from the preceding local midnight, rather than choosing a forecast based on future accuracy. March spillover remains in the full export only.
+
+A ready-to-review [February day-ahead CSV](examples/submission/february_day_ahead.csv) is committed with [verification and provenance](examples/submission/README.md), so the export is available without the full local weather/model cache. This 24-hour-per-origin table is a submission export, not a complete dashboard directory.
 
 The January 31 origin uses the December-trained bundle because a model fitted through January 31 would leak future observations at that origin. February origins use the final bundle fitted through January 31. All cutoffs use interval end times, not just target start timestamps.
 
@@ -123,7 +124,7 @@ python -m pytest -q
 python -m src demo --output outputs/verification
 ```
 
-Tests cover missing/ambiguous observations, future-weather and future-training rejection, missing weather coverage, output bounds/completeness, tool order, deduplication, forecast revision, older-run recovery, nullable timestamps and the agent tool protocol. Live OpenAI execution, recovery from an injected weather outage, a complete February replay, and a fresh-environment offline run were also verified. The real recovery trace is in `examples/backend/recovery-events.jsonl`; its deliberately injected failure is labelled explicitly.
+The combined backend/UI suite passes **25 tests and 10 subtests**. `requirements-dev.txt` installs both backend and dashboard test dependencies. Tests cover missing/ambiguous observations, future-weather and future-training rejection, missing weather coverage, output bounds/completeness, tool order, deduplication, forecast revision, older-run recovery, nullable timestamps and the agent tool protocol. Live OpenAI execution, recovery from an injected weather outage, a complete February replay, and a fresh-environment offline run were also verified. PR #6 follow-up repeated the full February replay and a fresh live OpenAI call; the results and trace are in [examples/submission](examples/submission/README.md). The real recovery trace is in `examples/backend/recovery-events.jsonl`; its deliberately injected failure is labelled explicitly.
 
 Backend: `src/`, configuration, dependencies, root README and real examples. Dashboard teammate: `app.py`, `ui/`, `assets/`, `requirements-ui.txt`, `docs/DEMO.md`. Work on feature branches and integrate through PRs.
 
