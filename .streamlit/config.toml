@@ -1,0 +1,14 @@
+# Horizon is a light design. Configure native widgets as well as the CSS so
+# macOS/browser dark-mode preferences cannot produce white text on light cards.
+[theme]
+base = "light"
+primaryColor = "#6046d7"
+backgroundColor = "#f5f6fb"
+secondaryBackgroundColor = "#ffffff"
+textColor = "#25304a"
+borderColor = "#e5e8f1"
+
+[theme.sidebar]
+backgroundColor = "#ffffff"
+secondaryBackgroundColor = "#f5f6fb"
+textColor = "#25304a"

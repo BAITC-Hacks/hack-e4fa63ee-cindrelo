@@ -28,6 +28,8 @@ CINDRELO_OUTPUT_DIR=examples/dashboard streamlit run app.py
 CINDRELO_OUTPUT_DIR=outputs/offline-demo streamlit run app.py
 ```
 
+Start Streamlit from the repository root so it loads [`.streamlit/config.toml`](.streamlit/config.toml). Horizon uses an explicit light theme for native controls and text, including on machines with a dark system preference. After updating this file, stop Streamlit with `Ctrl+C`, restart it, and reload the browser. The [Streamlit theme configuration](https://docs.streamlit.io/develop/concepts/configuration/theming) keeps widget colors consistent with the dashboard's light backgrounds.
+
 `docs/fixtures/dashboard/` remains synthetic UI test data. `examples/dashboard/` contains model results. Both follow [the same contract](docs/TEAMMATE_SPEC.md).
 
 <a id="windows-powershell-enable-utf-8"></a>
