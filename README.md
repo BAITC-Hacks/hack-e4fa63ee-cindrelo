@@ -6,6 +6,11 @@ Hourly normalized-power forecasts for two wind turbines, driven by archived weat
 
 **Limitations:** source timezone and interval convention are assumed; weather publication delay is assumed; the archive's historical as-issued provenance is unverified. Forecasts carry `degraded` status and visible warnings. February has no supplied observations, so no February accuracy is claimed.
 
+![Dashboard](assets/image.png)
+
+[!NOTE]
+Review CINDRELO_ARCHITECTURE.pdf for details
+
 ## Quick start
 
 Tested with Python 3.14.7 on macOS ARM64. Run from the repository root:
@@ -59,6 +64,7 @@ The command prints the completed snapshot directory to use as `CINDRELO_OUTPUT_D
 Completed dashboard runs are immutable snapshots under `outputs/dashboard-runs/<session>/snapshot-<id>/`. The UI selects a snapshot only after the entire requested cycle succeeds; a failed revision keeps the previous view. Committed examples are preserved. The cycle runs on demand, with a simulated update; there is no background scheduler.
 
 <a id="windows-powershell-enable-utf-8"></a>
+
 ### Windows PowerShell
 
 Backend files are explicitly read as UTF-8 (with optional BOM) and written as UTF-8. `-X utf8` is no longer required for backend file handling. This fixes the spurious weather-cache checksum mismatch caused by Windows legacy encodings; checksum validation remains enabled and the bundled hashes are unchanged. The regression suite exercises a clean demo under a simulated Windows `cp1252` file default, including Cyrillic source metadata, degree-symbol weather units, Unicode event messages and repeat-run deduplication. The integrated backend also runs on Windows/Python 3.12 without the earlier `python -X utf8` workaround. On an older checkout, `python -X utf8 -m src demo` enables UTF-8 explicitly; upgrading and regenerating old output is the durable fix.
@@ -121,12 +127,12 @@ The original baseline selection used December 2025 only. The empirical curve's D
 
 January 2026 holdout, both turbines and horizons pooled; 2,928 identical scored forecast/target pairs per model:
 
-| Model | MAE, normalized power |
-|---|---:|
-| **Empirical curve, selected** | **0.1669** |
-| CatBoost | 0.2087 |
-| Training mean | 0.3023 |
-| Last-known-power persistence | 0.3340 |
+| Model                         | MAE, normalized power |
+| ----------------------------- | --------------------: |
+| **Empirical curve, selected** |            **0.1669** |
+| CatBoost                      |                0.2087 |
+| Training mean                 |                0.3023 |
+| Last-known-power persistence  |                0.3340 |
 
 Detailed per-turbine/horizon MAE, RMSE and sample counts are in [the measured metrics](examples/dashboard/metrics.csv). These results are conditional on the documented timezone and archive assumptions. They do not establish operational forecast accuracy or February performance.
 

@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cindrelo — From weather to wind power</title>
+<style>
+  :root { --ink:#222641; --muted:#67718a; --purple:#6446e7; --line:#dddff0; --teal:#167f79; }
+  * { box-sizing:border-box; }
+  html, body { margin:0; padding:0; }
+  body { background:#e9eaf2; font-family:Arial, Helvetica, sans-serif; color:var(--ink); -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .page { width:1600px; height:1000px; padding:55px 64px 36px; background:radial-gradient(ellipse at 96% 0%,#ebe6ff 0%,transparent 42%),#f8f9fd; overflow:hidden; position:relative; }
+  .topline { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; }
+  .brand { display:flex; align-items:center; gap:13px; font-size:22px; font-weight:700; letter-spacing:-.6px; }
+  .mark { width:34px; height:34px; border-radius:10px; background:var(--purple); display:grid; place-items:center; color:white; }
+  .eyebrow { font-size:12px; font-weight:700; letter-spacing:2.6px; color:var(--purple); }
+  .edition { font-size:12px; letter-spacing:1.8px; color:var(--muted); }
+  header { display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:32px; }
+  h1 { font-size:48px; line-height:1.1; letter-spacing:-2px; margin:0 0 13px; font-weight:700; }
+  .subtitle { margin:0; font-size:18px; color:var(--muted); line-height:1.5; }
+  .scope { display:flex; gap:24px; padding-bottom:3px; }
+  .stat { border-left:1px solid #d6d5e9; padding-left:22px; min-width:108px; }
+  .stat strong { display:block; font-size:30px; letter-spacing:-1px; margin-bottom:5px; }
+  .stat span { font-size:12px; color:var(--muted); }
+  .orchestrator { display:flex; align-items:center; gap:24px; background:#262740; color:white; padding:23px 26px; border-radius:18px; height:96px; box-shadow:0 10px 30px #27213e0b; }
+  .trigger { border:1px solid #9d8cff; background:#7858f2; border-radius:11px; padding:15px 18px; display:flex; gap:12px; align-items:center; font-size:16px; font-weight:700; white-space:nowrap; }
+  .trigger svg { width:14px; height:14px; }
+  .controller { flex:1; border-left:1px solid #55566c; padding-left:24px; }
+  .controller h2 { font-size:20px; letter-spacing:-.3px; margin:0 0 7px; }
+  .controller p { font-size:14px; color:#d0cfe0; margin:0; }
+  .control-tag { display:flex; align-items:center; gap:9px; font-size:13px; background:#ffffff0d; border:1px solid #ffffff20; padding:11px 14px; border-radius:24px; white-space:nowrap; }
+  .dot { width:7px; height:7px; background:#77dbbb; border-radius:50%; }
+  .workflow-label { display:flex; justify-content:space-between; align-items:center; margin:26px 0 15px; }
+  .workflow-label span { font-size:11px; font-weight:700; letter-spacing:2px; color:var(--muted); }
+  .workflow-label small { font-size:12px; color:var(--muted); }
+  .flow { display:grid; grid-template-columns:repeat(6,1fr); gap:19px; position:relative; }
+  .step { position:relative; height:235px; border-radius:16px; background:#fff; border:1px solid var(--line); padding:21px 18px 18px; box-shadow:0 6px 14px #242d5503; }
+  .step:not(:last-child)::after { content:'›'; position:absolute; left:calc(100% + 3px); top:97px; font-size:28px; line-height:28px; color:#8e87b3; z-index:3; }
+  .step-head { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+  .icon { display:grid; place-items:center; width:40px; height:40px; border-radius:12px; color:var(--purple); background:#f0edff; }
+  .icon svg { width:24px; height:24px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
+  .number { font-size:12px; font-weight:700; color:#9298af; }
+  h3 { font-size:20px; letter-spacing:-.4px; margin:0 0 11px; }
+  .step p { font-size:14px; color:var(--muted); line-height:1.5; margin:0; }
+  .step .note { position:absolute; left:18px; bottom:18px; color:#77758d; font-size:11px; font-weight:700; letter-spacing:.3px; }
+  .model { border-color:#b5a3fb; background:linear-gradient(150deg,#fcfbff,#f2efff); }
+  .publish { border-color:#b6ddd5; background:#f5fbf9; }
+  .publish .icon { background:#e0f3ec; color:var(--teal); }
+  .publish .note { color:var(--teal); }
+  .loop { height:91px; position:relative; }
+  .loop svg { position:absolute; inset:0; width:100%; height:91px; overflow:visible; }
+  .loop-label { position:absolute; left:50%; top:21px; transform:translateX(-50%); padding:10px 20px; border-radius:24px; border:1px solid #d6ccfd; background:#f2eeff; color:#5840b9; font-size:14px; white-space:nowrap; }
+  .loop-label strong { font-weight:700; }
+  .bottom { display:grid; grid-template-columns:1.05fr 1.15fr 1fr; gap:20px; }
+  .panel { height:151px; padding:21px 23px; border:1px solid var(--line); border-radius:16px; background:#ffffffa8; }
+  .panel h4 { margin:0 0 15px; font-size:11px; text-transform:uppercase; letter-spacing:1.7px; color:var(--purple); }
+  .panel p { font-size:14px; line-height:1.6; margin:0; color:var(--muted); }
+  .panel b { color:var(--ink); font-weight:600; }
+  .chip-row { display:flex; flex-wrap:wrap; gap:7px; margin-top:11px; }
+  .chip { padding:5px 9px; font-size:11px; color:#4b5872; border:1px solid #e0e3ed; border-radius:6px; background:white; }
+  footer { display:flex; align-items:flex-start; gap:14px; margin-top:24px; border-top:1px solid #dddfea; padding-top:17px; }
+  .status { padding:6px 10px; border-radius:6px; background:#f8eed8; color:#896114; font-weight:700; font-size:10px; letter-spacing:.8px; white-space:nowrap; }
+  footer p { font-size:11px; color:#767e93; line-height:1.6; margin:0; flex:1; }
+  .foot-brand { font-size:11px; color:#85889e; letter-spacing:1px; white-space:nowrap; margin-top:7px; }
+  @page { size:1600px 1000px; margin:0; }
+  @media print { html,body { width:1600px; height:1000px; background:white; } .page { break-inside:avoid; } }
+</style>
+</head>
+<body>
+<main class="page" aria-label="Cindrelo forecasting architecture">
+  <div class="topline">
+    <div class="brand"><span class="mark"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 8h12c4 0 4-5 1-5M3 12h17M3 16h9c4 0 4 5 1 5"/></svg></span>Cindrelo <span class="eyebrow" style="margin-left:17px">HORIZON</span></div>
+    <span class="edition">AGENTIC WIND POWER FORECASTING / SYSTEM OVERVIEW</span>
+  </div>
+  <header>
+    <div><h1>From weather to wind power.</h1><p class="subtitle">One action. A complete forecasting cycle. A trace for every decision.</p></div>
+    <div class="scope"><div class="stat"><strong>2</strong><span>wind turbines</span></div><div class="stat"><strong>48 h</strong><span>per forecast</span></div><div class="stat"><strong>+12 h</strong><span>replay update</span></div></div>
+  </header>
+  <section class="orchestrator" aria-label="Agent orchestration">
+    <div class="trigger"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M3 1.5 14 8 3 14.5z"/></svg>Run forecast cycle</div>
+    <div class="controller"><h2>OpenAI tool controller</h2><p>Chooses guarded tools, follows their results and handles recovery within a bounded execution budget.</p></div>
+    <div class="control-tag"><span class="dot"></span>Orchestration by AI · predictions by Python</div>
+  </section>
+  <div class="workflow-label"><span>THE EXECUTION PATH</span><small>Actual tool events stream to the dashboard as each step runs</small></div>
+  <section class="flow" aria-label="Six steps in the forecasting workflow">
+    <article class="step">
+      <div class="step-head"><span class="icon"><svg viewBox="0 0 24 24"><path d="M6 16a4 4 0 0 1-1-7.8A6 6 0 0 1 17 7a4.5 4.5 0 0 1 1 9M12 12v9m-3-3 3 3 3-3"/></svg></span><span class="number">01</span></div>
+      <h3>Fetch weather</h3><p>Retrieve an eligible archived ECMWF IFS run through Open-Meteo.</p><div class="note">EXTERNAL DATA + VERIFIED CACHE</div>
+    </article>
+    <article class="step">
+      <div class="step-head"><span class="icon"><svg viewBox="0 0 24 24"><path d="M4 5h16M4 12h16M4 19h16M8 3v4m8 3v4M10 17v4"/></svg></span><span class="number">02</span></div>
+      <h3>Prepare data</h3><p>Order weather inputs.<br>Aggregate turbine telemetry into hourly observations.</p><div class="note">ACTUALS ARE FOR COMPARISON</div>
+    </article>
+    <article class="step">
+      <div class="step-head"><span class="icon"><svg viewBox="0 0 24 24"><path d="m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6zM8 12l3 3 5-6"/></svg></span><span class="number">03</span></div>
+      <h3>Validate inputs</h3><p>Check weather availability, model training cutoff and a complete 48-hour horizon.</p><div class="note">TEMPORAL GUARDS IN CODE</div>
+    </article>
+    <article class="step model">
+      <div class="step-head"><span class="icon"><svg viewBox="0 0 24 24"><path d="M4 3v17h17M7 17l3-2 3-7 3-3h4"/><circle cx="13" cy="8" r="1"/></svg></span><span class="number">04</span></div>
+      <h3>Predict power</h3><p>Run the selected empirical curve in Python using forecast wind inputs.</p><div class="note">PRE-TRAINED NUMERICAL MODEL</div>
+    </article>
+    <article class="step">
+      <div class="step-head"><span class="icon"><svg viewBox="0 0 24 24"><path d="M3 20h18M4 15l5-6 5 3 6-8M4 10l5 5 5-8 6 5"/></svg></span><span class="number">05</span></div>
+      <h3>Analyze results</h3><p>Check power bounds and compare revisions across matching target hours.</p><div class="note">REVISION ≠ FORECAST ERROR</div>
+    </article>
+    <article class="step publish">
+      <div class="step-head"><span class="icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8m-4-4v4M6 13l4-4 4 2 4-4"/></svg></span><span class="number">06</span></div>
+      <h3>Publish & display</h3><p>Save a complete snapshot and select the latest forecast in the dashboard.</p><div class="note">96 HOURLY ROWS PER ISSUANCE</div>
+    </article>
+  </section>
+  <div class="loop" aria-label="Automatically advance the historical replay by 12 hours and repeat">
+    <svg viewBox="0 0 1472 91" fill="none"><defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="m1 1 7 4-7 4" fill="none" stroke="#9681d9" stroke-width="1.5"/></marker></defs><path d="M1357 0v30q0 12-12 12H127q-12 0-12-12V4" stroke="#a995e3" stroke-width="1.7" marker-end="url(#arrow)"/></svg>
+    <div class="loop-label"><strong>Automatic update</strong> &nbsp; · &nbsp; Advance the replay clock +12 h → fetch newer weather → recalculate</div>
+  </div>
+  <section class="bottom" aria-label="System properties and outputs">
+    <article class="panel"><h4>What the user receives</h4><p><b>Hourly normalized power in [0, 1]</b><br>Latest forecast, previous issuance and actuals.</p><div class="chip-row"><span class="chip">Forecast CSV</span><span class="chip">Evaluation metrics</span><span class="chip">Tool trace</span></div></article>
+    <article class="panel"><h4>Reliable by construction</h4><p><b>Same inputs:</b> reuse existing predictions.<br><b>Weather outage:</b> verified cache / older-run recovery.<br><b>Failed update:</b> keep the last complete snapshot.</p></article>
+    <article class="panel"><h4>Two ways to demonstrate</h4><p><b>Live agent:</b> OpenAI + external archive retrieval.<br><b>Offline rehearsal:</b> deterministic tools + cache.<br>Both modes run the numerical model.</p></article>
+  </section>
+  <footer><span class="status">DEGRADED · DISCLOSED</span><p>Historical replay, on demand; no background scheduler. Timezone, publication delay and historical weather provenance remain assumptions.<br>Future actuals are never prediction features. Model training happens before inference. Weather: Open-Meteo / ECMWF · CC BY 4.0.</p><span class="foot-brand">HACKALEM AI · CINDRELO</span></footer>
+</main>
+</body>
+</html>
