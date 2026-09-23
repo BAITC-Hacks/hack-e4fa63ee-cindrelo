@@ -124,6 +124,8 @@ Streamlit screen: issue time, turbine selector, next-48-hour chart, earlier-vers
 
 Minimum export schema:
 
+The concrete dashboard contract, including UTC interval-start timestamps and horizon numbering, is defined in [TEAMMATE_SPEC.md](TEAMMATE_SPEC.md). Use that contract for implementation.
+
 ```text
 forecast_id,issued_at,valid_time,turbine_id,horizon_hours,
 power_normalized,weather_run_time,weather_available_at,
@@ -161,7 +163,7 @@ Three-minute pitch: (1) why day-ahead wind uncertainty matters, (2) replay one h
 
 ## Questions that affect implementation
 
-- Availability of an LLM API key; team size/skills are confirmed above.
+- OpenAI credits are confirmed: $50 activated, with an additional $50 available after the teammate activates their promotion. API key configuration remains a local setup step; never commit keys. Team size/skills are confirmed above.
 - CSV timezone and timestamp interval convention.
 - Required daily issuance time, overlap/scoring policy and submission format.
 - Rated capacities, hub heights and normalization definition.

@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "data_kind": "synthetic",
+  "timezone": "UTC",
+  "target_unit": "normalized_power",
+  "description": "Invented January examples for dashboard development only. These are not forecasts, observations, or measured validation results.",
+  "warnings": [
+    "SYNTHETIC DEMO DATA \u2014 not model results",
+    "Weather availability times in this fixture are invented; they do not establish archive provenance."
+  ]
+}
