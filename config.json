@@ -1,0 +1,15 @@
+{
+  "raw_timezone": "Asia/Almaty",
+  "calendar_timezone": "Asia/Almaty",
+  "timestamp_convention": "interval_start",
+  "weather_delay_hours": 8,
+  "weather_model": "ecmwf_ifs",
+  "train_start": "2025-09-01",
+  "validation_start": "2026-01-01",
+  "validation_end": "2026-02-01",
+  "turbines_note": "Coordinates from the brief; capacities and hub heights unspecified.",
+  "turbines": {
+    "turbine_1": {"latitude": 43.645150, "longitude": 78.535604, "file_glob": "*turbine 1.csv"},
+    "turbine_2": {"latitude": 43.643198, "longitude": 78.538828, "file_glob": "*turbine 2.csv"}
+  }
+}
