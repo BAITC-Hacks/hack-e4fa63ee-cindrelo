@@ -1,0 +1,18 @@
+{
+  "source": "Open-Meteo Previous Runs",
+  "documentation": "https://open-meteo.com/en/docs/previous-runs-api",
+  "models": [
+    "gfs_global",
+    "icon_global",
+    "jma_gsm"
+  ],
+  "offsets_hours": [
+    48,
+    72
+  ],
+  "publication_delay_hours_assumed": 8,
+  "exact_historical_publication_verified": false,
+  "day2_rows": 11760,
+  "day3_rows": 11760,
+  "attribution": "Open-Meteo, NOAA GFS, DWD ICON, JMA GSM; ECMWF IFS existing archive; CC BY 4.0"
+}

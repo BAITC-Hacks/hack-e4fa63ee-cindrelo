@@ -1,0 +1,22 @@
+{
+  "methods": [
+    "curve",
+    "fresh_cat",
+    "fresh_hist",
+    "fresh_cat_time",
+    "fresh_hist_time",
+    "fresh_cat_live",
+    "fresh_wind_cat",
+    "blend_fresh_hist_time",
+    "blend_fresh_cat_time"
+  ],
+  "telemetry_and_label_delay_hours": 2,
+  "weather_publication_delay_hours": 8,
+  "selection": "December 1-29 target days; all labels available before Jan1 forecast issuance on Dec31",
+  "training": "Before each month plus separate earlier boundary fit, labels must mature cutoff minus 2h",
+  "january": "Reused diagnostic; no January training or recipe selection",
+  "scope": "Both turbines, full target month, interval starts 24-47h after issuance",
+  "target_mae_max": 0.05,
+  "publication_provenance_verified": false,
+  "source_sha256": "57c55139c8c855b07c14d75a61926b6f07610934ea149aa6664440eec361a9df"
+}

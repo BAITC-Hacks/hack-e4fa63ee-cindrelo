@@ -1,0 +1,8 @@
+{
+  "src/fresh_provider_benchmark.py": "57c55139c8c855b07c14d75a61926b6f07610934ea149aa6664440eec361a9df",
+  "src/provider_weather.py": "3ffdfb70eb85a5e4080768de840cb18656fa6a88dbe9ff341916368b0065b735",
+  "data/hourly.csv": "0e89a1b8a35c30066934141d7e56c562450c3c59242c55e3dd51c8455aaf85d0",
+  "outputs/provider-weather-day2/weather.csv": "f7101346c095c50e594c419c9601d88e19c09ac4673a349d8eef845aae8d30e9",
+  "outputs/provider-weather/weather.csv": "9dfc2334ddd95d9291443e38e73574b7acef86ffd54b2cc3ab17aa734cb9dc1d",
+  "outputs/fresh-provider-benchmark/predictions.csv": "e1f76ca1eca3927cb43ad032523f9bbfe1922b88c0c0db8a7b12f1fb5076561f"
+}

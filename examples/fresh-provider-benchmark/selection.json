@@ -1,0 +1,14 @@
+{
+  "selected": "fresh_wind_cat",
+  "december1_29_mae": {
+    "fresh_wind_cat": 0.197417355599657,
+    "fresh_cat": 0.19873232020021797,
+    "blend_fresh_cat_time": 0.20016068549122246,
+    "fresh_cat_time": 0.20033933123749237,
+    "fresh_cat_live": 0.20078332403920038,
+    "blend_fresh_hist_time": 0.20289692042677035,
+    "fresh_hist": 0.2035991400427811,
+    "fresh_hist_time": 0.2049119555572124,
+    "curve": 0.21998194175424646
+  }
+}

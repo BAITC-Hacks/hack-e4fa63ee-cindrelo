@@ -1,0 +1,100 @@
+{
+  "2025-12": {
+    "coverage": {
+      "expected_pairs": 1488,
+      "scored_pairs": 1474,
+      "missing_incomplete_observations": 14
+    },
+    "boundary": {
+      "cutoff": "2025-11-29T19:00:00Z",
+      "training_sequences": {
+        "ar_ridge100": 1683,
+        "ar_ridge1000": 1683,
+        "ar_extra": 1683,
+        "weather_ridge100": 308,
+        "weather_ridge1000": 308,
+        "weather_extra": 308,
+        "weather_hist": 308
+      },
+      "max_training_target_available_at": {
+        "ar_ridge100": "2025-11-28T21:00:00Z",
+        "ar_ridge1000": "2025-11-28T21:00:00Z",
+        "ar_extra": "2025-11-28T21:00:00Z",
+        "weather_ridge100": "2025-11-28T21:00:00Z",
+        "weather_ridge1000": "2025-11-28T21:00:00Z",
+        "weather_extra": "2025-11-28T21:00:00Z",
+        "weather_hist": "2025-11-28T21:00:00Z"
+      }
+    },
+    "main": {
+      "cutoff": "2025-11-30T19:00:00Z",
+      "training_sequences": {
+        "ar_ridge100": 1685,
+        "ar_ridge1000": 1685,
+        "ar_extra": 1685,
+        "weather_ridge100": 310,
+        "weather_ridge1000": 310,
+        "weather_extra": 310,
+        "weather_hist": 310
+      },
+      "max_training_target_available_at": {
+        "ar_ridge100": "2025-11-29T21:00:00Z",
+        "ar_ridge1000": "2025-11-29T21:00:00Z",
+        "ar_extra": "2025-11-29T21:00:00Z",
+        "weather_ridge100": "2025-11-29T21:00:00Z",
+        "weather_ridge1000": "2025-11-29T21:00:00Z",
+        "weather_extra": "2025-11-29T21:00:00Z",
+        "weather_hist": "2025-11-29T21:00:00Z"
+      }
+    }
+  },
+  "2026-01": {
+    "coverage": {
+      "expected_pairs": 1488,
+      "scored_pairs": 1488,
+      "missing_incomplete_observations": 0
+    },
+    "boundary": {
+      "cutoff": "2025-12-30T19:00:00Z",
+      "training_sequences": {
+        "ar_ridge100": 1739,
+        "ar_ridge1000": 1739,
+        "ar_extra": 1739,
+        "weather_ridge100": 364,
+        "weather_ridge1000": 364,
+        "weather_extra": 364,
+        "weather_hist": 364
+      },
+      "max_training_target_available_at": {
+        "ar_ridge100": "2025-12-29T21:00:00Z",
+        "ar_ridge1000": "2025-12-29T21:00:00Z",
+        "ar_extra": "2025-12-29T21:00:00Z",
+        "weather_ridge100": "2025-12-29T21:00:00Z",
+        "weather_ridge1000": "2025-12-29T21:00:00Z",
+        "weather_extra": "2025-12-29T21:00:00Z",
+        "weather_hist": "2025-12-29T21:00:00Z"
+      }
+    },
+    "main": {
+      "cutoff": "2025-12-31T19:00:00Z",
+      "training_sequences": {
+        "ar_ridge100": 1741,
+        "ar_ridge1000": 1741,
+        "ar_extra": 1741,
+        "weather_ridge100": 366,
+        "weather_ridge1000": 366,
+        "weather_extra": 366,
+        "weather_hist": 366
+      },
+      "max_training_target_available_at": {
+        "ar_ridge100": "2025-12-30T21:00:00Z",
+        "ar_ridge1000": "2025-12-30T21:00:00Z",
+        "ar_extra": "2025-12-30T21:00:00Z",
+        "weather_ridge100": "2025-12-30T21:00:00Z",
+        "weather_ridge1000": "2025-12-30T21:00:00Z",
+        "weather_extra": "2025-12-30T21:00:00Z",
+        "weather_hist": "2025-12-30T21:00:00Z"
+      }
+    }
+  }
+}

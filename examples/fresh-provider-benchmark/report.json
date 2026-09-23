@@ -1,0 +1,63 @@
+{
+  "selected": "fresh_wind_cat",
+  "december1_29_mae": {
+    "fresh_wind_cat": 0.197417355599657,
+    "fresh_cat": 0.19873232020021797,
+    "blend_fresh_cat_time": 0.20016068549122246,
+    "fresh_cat_time": 0.20033933123749237,
+    "fresh_cat_live": 0.20078332403920038,
+    "blend_fresh_hist_time": 0.20289692042677035,
+    "fresh_hist": 0.2035991400427811,
+    "fresh_hist_time": 0.2049119555572124,
+    "curve": 0.21998194175424646
+  },
+  "december_full_mae": {
+    "fresh_wind_cat": 0.1995816459804287,
+    "fresh_cat": 0.19973480970544924,
+    "fresh_cat_time": 0.20168916914552543,
+    "fresh_cat_live": 0.20287370971687285,
+    "blend_fresh_cat_time": 0.20474283784302533,
+    "fresh_hist": 0.20564385205423708,
+    "fresh_hist_time": 0.20689310156154248,
+    "blend_fresh_hist_time": 0.20789272059684077,
+    "curve": 0.2270193985584316
+  },
+  "january_full_mae": {
+    "blend_fresh_cat_time": 0.16928406962709294,
+    "blend_fresh_hist_time": 0.17170409037594364,
+    "fresh_cat": 0.17405381871179398,
+    "fresh_wind_cat": 0.1740794023417347,
+    "fresh_cat_live": 0.17530168096136511,
+    "curve": 0.17678171997552672,
+    "fresh_cat_time": 0.17803351671639986,
+    "fresh_hist": 0.18380340208455287,
+    "fresh_hist_time": 0.1868575527188177
+  },
+  "january2_31_mae": {
+    "blend_fresh_cat_time": 0.1686412033606666,
+    "blend_fresh_hist_time": 0.1713192500767486,
+    "fresh_cat": 0.17294780244437133,
+    "fresh_wind_cat": 0.17307645581058087,
+    "fresh_cat_live": 0.1743956988938949,
+    "curve": 0.17623527286679486,
+    "fresh_cat_time": 0.17677425602718258,
+    "fresh_hist": 0.18251057272990648,
+    "fresh_hist_time": 0.1859916995491392
+  },
+  "january31_mae": {
+    "fresh_wind_cat": 0.2159400716053784,
+    "fresh_cat_live": 0.23874675902948642,
+    "fresh_hist_time": 0.24111401341159475,
+    "fresh_cat_time": 0.24499276883373008,
+    "fresh_cat": 0.24756151074734892,
+    "fresh_hist": 0.2580165119081271,
+    "blend_fresh_hist_time": 0.27443884409379976,
+    "blend_fresh_cat_time": 0.2763782218048675,
+    "curve": 0.3081399985851656
+  },
+  "n_january_per_model": 1488,
+  "n_january31_per_model": 48,
+  "numerical_target_met_by": [],
+  "production_changed": false,
+  "publication_provenance_verified": false
+}

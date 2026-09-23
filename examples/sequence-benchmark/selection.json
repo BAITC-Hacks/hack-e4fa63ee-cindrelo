@@ -1,0 +1,21 @@
+{
+  "selected": "blend_weather_hist",
+  "december_1_to_29_mae": {
+    "blend_weather_hist": 0.21917748137946658,
+    "curve": 0.21998194175424646,
+    "blend_weather_ridge100": 0.22791784999607265,
+    "blend_weather_ridge1000": 0.2288317004704036,
+    "weather_hist": 0.23219760257720798,
+    "blend_weather_extra": 0.23483183207393155,
+    "blend_ar_extra": 0.25518365961861444,
+    "weather_ridge1000": 0.26312467649457216,
+    "blend_ar_ridge1000": 0.263395668690091,
+    "weather_extra": 0.26648115296914077,
+    "blend_ar_ridge100": 0.2704035780632953,
+    "weather_ridge100": 0.2707492439975196,
+    "ar_extra": 0.3302795268188199,
+    "ar_ridge1000": 0.3509587938821179,
+    "ar_ridge100": 0.37377255507873147
+  },
+  "selection_available_by": "2025-12-30T19:00:00Z"
+}

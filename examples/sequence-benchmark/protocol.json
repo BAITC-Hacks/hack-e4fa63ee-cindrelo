@@ -1,0 +1,27 @@
+{
+  "methods": [
+    "curve",
+    "ar_ridge100",
+    "ar_ridge1000",
+    "ar_extra",
+    "weather_ridge100",
+    "weather_ridge1000",
+    "weather_extra",
+    "weather_hist",
+    "blend_ar_ridge100",
+    "blend_ar_ridge1000",
+    "blend_ar_extra",
+    "blend_weather_ridge100",
+    "blend_weather_ridge1000",
+    "blend_weather_extra",
+    "blend_weather_hist"
+  ],
+  "history_hours": 168,
+  "reporting_delay_after_interval_end_hours": 2,
+  "max_cpu_threads": 2,
+  "selection": "December 1--29 complete target days; selection available before Dec 31 issuance for Jan 1",
+  "boundary": "Separate earlier frozen model for first target day; no backdated fitting",
+  "training": "AR uses all earlier turbine history; weather-conditioned models use archived paired period",
+  "january": "Previously examined historical test; no January fitting, conservative past telemetry authorized",
+  "source_sha256": "b355219666bb09f9fa264ef1ac5b3e089410df2d4b1d5f8ae50f1248a34f8162"
+}
