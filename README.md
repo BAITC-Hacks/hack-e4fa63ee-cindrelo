@@ -8,6 +8,9 @@ Hourly normalized-power forecasts for two wind turbines, driven by archived weat
 
 ![Dashboard](assets/image.png)
 
+[!NOTE]
+Review CINDRELO_ARCHITECTURE.pdf for details
+
 ## Quick start
 
 Tested with Python 3.14.7 on macOS ARM64. Run from the repository root:
