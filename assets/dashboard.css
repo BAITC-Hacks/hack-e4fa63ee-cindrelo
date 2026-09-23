@@ -8,3 +8,10 @@ h2, h3 { color: #183044; letter-spacing: -0.02em; }
 [data-testid="stCaptionContainer"] { color: #526476; }
 [data-testid="stCaptionContainer"] p { color: #526476 !important; }
 button { border-radius: 8px !important; }
+.design-masthead h1 { padding: .65rem 0 !important; margin:0; }
+.design-masthead p { margin: .5rem 0 0; }
+@media (max-width:700px) {
+  .design-masthead h1 { font-size:2.4rem!important; }
+  [data-testid="stMainBlockContainer"] { padding-top:1.5rem; }
+  [data-testid="stMetricValue"] { font-size:1.4rem!important; }
+}

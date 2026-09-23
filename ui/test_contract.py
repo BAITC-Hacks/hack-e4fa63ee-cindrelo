@@ -170,7 +170,7 @@ class ContractTests(unittest.TestCase):
             app = AppTest.from_file(str(ROOT / "app.py")).run()
             self.assertFalse(app.exception)
             self.assertEqual(app.selectbox(key="forecast_id").value, "demo-2")
-            self.assertEqual(app.metric[0].value, "0.0400")
+            self.assertEqual(next(item.value for item in app.metric if item.label == "Forecast revision"), "0.0400")
             app.selectbox(key="turbine").select("turbine_2").run()
             app.selectbox(key="forecast_id").select("demo-1").run()
             self.assertFalse(app.exception)

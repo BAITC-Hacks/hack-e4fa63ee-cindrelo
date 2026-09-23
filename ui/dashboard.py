@@ -3,6 +3,7 @@ import streamlit as st
 import pandas as pd
 
 from ui.charts import forecast_chart
+from ui.designs import apply_theme, masthead, summary_cards
 from ui.data import ArtifactError, ROOT, TURBINES, aligned_actuals, compare_forecasts, export_filename, export_forecast, forecast_choices, load_dashboard, output_directory, previous_issuances
 
 SYNTHETIC_BANNER = "SYNTHETIC DEMO DATA — not model results"
@@ -62,9 +63,63 @@ def show_events(events, forecast_id, synthetic):
             st.text(event.message)
 
 
+
+
+def show_forecast(data, selected, turbine, forecast_id, labels, synthetic, degraded):
+    previous_choices = previous_issuances(data.forecasts, forecast_id)
+    overlap = pd.DataFrame()
+    if not previous_choices.empty:
+        previous_ids = previous_choices.forecast_id.tolist()
+        previous_id = previous_ids[0]
+        if len(previous_ids) > 1:
+            previous_id = st.selectbox("Previous issuance version", previous_ids, format_func=labels.get)
+        previous = data.forecasts[data.forecasts.forecast_id.eq(previous_id) & data.forecasts.turbine_id.eq(turbine)]
+        overlap = compare_forecasts(selected, previous)
+    actuals = aligned_actuals(selected, data.actuals, turbine)
+    n_actuals = int(actuals.power_normalized.notna().sum())
+    with st.container(key="horizon_layout"):
+        chart_area, detail_area = st.columns([3, 1.2], gap="large")
+    with chart_area:
+        with st.container(border=True):
+            st.subheader("Hourly forecast")
+            st.caption(f"{TURBINES[turbine]} · {len(selected)} hourly targets · All target labels mark interval starts in UTC.")
+            controls = st.columns(2)
+            show_previous = controls[0].checkbox("Show previous issuance", value=True, disabled=overlap.empty)
+            show_actuals = controls[1].checkbox("Show actual power", value=True, disabled=n_actuals == 0)
+            st.plotly_chart(forecast_chart(selected, synthetic=synthetic,
+                overlap=overlap if show_previous else None, actuals=actuals if show_actuals else None),
+                width="stretch", theme=None, config={"displaylogo": False, "scrollZoom": False}, key="forecast_chart")
+            if overlap.empty:
+                st.info("No previous overlapping forecast")
+            else:
+                revision = float((overlap.power_normalized_selected - overlap.power_normalized_previous).abs().mean())
+                st.metric("Forecast revision", f"{revision:.4f}")
+                st.caption(f"Mean absolute change in normalized power over {len(overlap)} overlapping hours versus {previous_id}. This is a revision, not forecast error.")
+            if n_actuals == 0:
+                st.info("Actuals unavailable for this forecast period.")
+            else:
+                st.caption(f"Actual observations: {n_actuals} / {len(selected)} target hours. Missing observations remain gaps.")
+            february = actuals.valid_time.ge(pd.Timestamp("2026-02-01", tz="UTC")) & actuals.valid_time.lt(pd.Timestamp("2026-03-01", tz="UTC"))
+            if february.any() and not actuals.loc[february, "power_normalized"].notna().any():
+                st.caption("Actuals unavailable for February 2026. February forecast accuracy cannot be measured from the supplied files.")
+    with detail_area:
+        with st.container(border=True):
+            st.markdown("**Forecast details**")
+            columns = [st.container() for _ in range(4)]
+            values = [provenance_values(selected, "issued_at", timestamp=True), provenance_values(selected, "weather_run_time", timestamp=True), provenance_values(selected, "model_version"), "Degraded" if degraded else "OK"]
+            for column, label, value in zip(columns, ["Forecast issue", "Weather run", "Model version", "Status"], values):
+                column.caption(label)
+                column.text(value)
+            st.caption(f"Weather available: {provenance_values(selected, 'weather_available_at', timestamp=True)} · Forecast ID: {forecast_id}")
+            with st.expander("Input identity"):
+                st.code(provenance_values(selected, "input_hash"), language=None, wrap_lines=True)
+        st.download_button("Download forecast CSV", data=export_forecast(data, forecast_id), file_name=export_filename(forecast_id), mime="text/csv", type="primary", on_click="ignore")
+        st.caption(f"Exports all 96 rows for {forecast_id}: both turbines, all 48 hours, and the original CSV columns. The turbine selector only changes the chart.")
+
+
 def main():
     st.set_page_config(page_title="Cindrelo — Wind power forecast", page_icon="🌬️", layout="wide")
-    st.html("<style>" + (ROOT / "assets/dashboard.css").read_text(encoding="utf-8") + "</style>")
+    apply_theme()
     try:
         directory = output_directory()
     except ArtifactError as exc:
@@ -80,8 +135,8 @@ def main():
             st.code(str(directory), language=None, wrap_lines=True)
         st.button("Refresh", width="stretch", help="Reload saved files only. No weather requests or model training.")
         st.caption("Refresh reloads saved artifacts. It does not run the forecasting pipeline.")
-    st.title("Cindrelo — Wind power forecast")
-    st.caption("Hourly normalized power for two wind turbines")
+    masthead()
+    st.caption("Cindrelo — Wind power forecast · Hourly normalized power for two wind turbines")
     try:
         data = load_dashboard(directory)
     except ArtifactError as exc:
@@ -121,53 +176,13 @@ def main():
             for event in unpublished.itertuples():
                 st.text(f"{event.forecast_id} · {utc(event.timestamp)} · {event.tool}: {event.message}")
 
+    summary_cards(selected)
+    def forecast():
+        show_forecast(data, selected, turbine, forecast_id, labels, synthetic, degraded)
+
     forecast_tab, metrics_tab, trace_tab = st.tabs(["Forecast", "Model comparison", "Tool trace"])
     with forecast_tab:
-        previous_choices = previous_issuances(data.forecasts, forecast_id)
-        overlap = pd.DataFrame()
-        if not previous_choices.empty:
-            previous_ids = previous_choices.forecast_id.tolist()
-            previous_id = previous_ids[0]
-            if len(previous_ids) > 1:
-                previous_id = st.selectbox("Previous issuance version", previous_ids, format_func=labels.get)
-            previous = data.forecasts[data.forecasts.forecast_id.eq(previous_id) & data.forecasts.turbine_id.eq(turbine)]
-            overlap = compare_forecasts(selected, previous)
-        actuals = aligned_actuals(selected, data.actuals, turbine)
-        n_actuals = int(actuals.power_normalized.notna().sum())
-        with st.container(border=True):
-            st.subheader("Hourly forecast")
-            st.caption(f"{TURBINES[turbine]} · {len(selected)} hourly targets · All target labels mark interval starts in UTC.")
-            controls = st.columns(2)
-            show_previous = controls[0].checkbox("Show previous issuance", value=True, disabled=overlap.empty)
-            show_actuals = controls[1].checkbox("Show actual power", value=True, disabled=n_actuals == 0)
-            st.plotly_chart(forecast_chart(selected, synthetic=synthetic,
-                overlap=overlap if show_previous else None, actuals=actuals if show_actuals else None),
-                width="stretch", config={"displaylogo": False, "scrollZoom": False}, key="forecast_chart")
-            if overlap.empty:
-                st.info("No previous overlapping forecast")
-            else:
-                revision = float((overlap.power_normalized_selected - overlap.power_normalized_previous).abs().mean())
-                st.metric("Forecast revision", f"{revision:.4f}")
-                st.caption(f"Mean absolute change in normalized power over {len(overlap)} overlapping hours versus {previous_id}. This is a revision, not forecast error.")
-            if n_actuals == 0:
-                st.info("Actuals unavailable for this forecast period.")
-            else:
-                st.caption(f"Actual observations: {n_actuals} / {len(selected)} target hours. Missing observations remain gaps.")
-            february = actuals.valid_time.ge(pd.Timestamp("2026-02-01", tz="UTC")) & actuals.valid_time.lt(pd.Timestamp("2026-03-01", tz="UTC"))
-            if february.any() and not actuals.loc[february, "power_normalized"].notna().any():
-                st.caption("Actuals unavailable for February 2026. February forecast accuracy cannot be measured from the supplied files.")
-        with st.container(border=True):
-            st.markdown("**Forecast details**")
-            columns = st.columns(4)
-            values = [provenance_values(selected, "issued_at", timestamp=True), provenance_values(selected, "weather_run_time", timestamp=True), provenance_values(selected, "model_version"), "Degraded" if degraded else "OK"]
-            for column, label, value in zip(columns, ["Forecast issue", "Weather run", "Model version", "Status"], values):
-                column.caption(label)
-                column.text(value)
-            st.caption(f"Weather available: {provenance_values(selected, 'weather_available_at', timestamp=True)} · Forecast ID: {forecast_id}")
-            with st.expander("Input identity"):
-                st.code(provenance_values(selected, "input_hash"), language=None, wrap_lines=True)
-        st.download_button("Download forecast CSV", data=export_forecast(data, forecast_id), file_name=export_filename(forecast_id), mime="text/csv", type="primary", on_click="ignore")
-        st.caption(f"Exports all 96 rows for {forecast_id}: both turbines, all 48 hours, and the original CSV columns. The turbine selector only changes the chart.")
+        forecast()
     with metrics_tab:
         show_metrics(data.metrics, turbine, synthetic)
     with trace_tab:

@@ -2,7 +2,9 @@
 
 Use this after PRs #7 (dashboard designs) and #8 (backend portability) are merged. The next priority is a dependable demonstration and complete submission. Reserve the final **45–60 minutes** for rehearsal, submission checks and fixes uncovered by those checks. Freeze new features and model tuning during that window.
 
-The combined PR snapshot already merged without conflicts and passed **26 tests and 13 subtests** in an isolated macOS checkout. That result includes the dashboard design tests and simulated Windows encoding checks. Native Windows verification and browser save-to-disk still need confirmation.
+The combined PR snapshot merged without conflicts and passed **26 tests and 13 subtests** in an isolated macOS checkout. That result included the dashboard design tests and simulated Windows encoding checks. Native Windows verification and browser save-to-disk were the remaining dashboard checks at that point; the update below records their current status.
+
+**Dashboard update, 23 September:** native Windows verification now passes without `-X utf8` (26 tests, 13 subtests). Horizon is selected and real-data screenshots are captured. Browser save-to-disk remains pending the saved path from the user. See [tested revision, environment and evidence](DASHBOARD_FINALIZATION.md). PR #7 was still open during this check; verification used it integrated with the latest main in a feature branch.
 
 **Backend progress:** the [backend rehearsal](BACKEND_REHEARSAL.md) completed live forecast → revision → deduplication, full February replay and real-artifact dashboard checks on main `03f90bb`. The repository is the confirmed submission destination; the deadline is today, 23 September 2026, with no exact hour provided. PR #7 was still open at rehearsal, so final integrated verification remains pending.
 
@@ -42,13 +44,13 @@ $env:CINDRELO_OUTPUT_DIR = "outputs/final-rehearsal"
 python -m streamlit run app.py --browser.gatherUsageStats false
 ```
 
-- [ ] The page identifies published model output and displays degraded status and source warnings.
-- [ ] Turbine and issuance selections, actuals, revisions, metrics and trace views work.
-- [ ] Switching designs preserves turbine and issuance selections.
+- [x] The page identifies published model output and displays degraded status and source warnings.
+- [x] Turbine and issuance selections, actuals, revisions, metrics and trace views work.
+- [x] Horizon is the sole presentation design; no design switching is required.
 - [ ] Download a forecast using the browser, locate the saved file, and open it. Confirm 96 data rows, 48 per turbine, and the original forecast columns. The chart's turbine selector must not reduce export scope.
-- [ ] Choose one design for the presentation; keep it selected during rehearsal.
-- [ ] Capture clear screenshots with normalized-power units and limitations visible.
-- [ ] Record the native Windows test result and actual browser-save result in the demo notes.
+- [x] Choose one design for the presentation; keep it selected during rehearsal.
+- [x] Capture clear screenshots with normalized-power units and limitations visible.
+- [x] Record the native Windows test result and actual browser-save result in the demo notes. (Save attempt is recorded as **unconfirmed**, not passed.)
 
 ## 2. Backend owner: live execution and revision
 

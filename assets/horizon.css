@@ -1,0 +1,17 @@
+[data-testid="stAppViewContainer"] { background:#f5f6fb; color:#25304a; }
+[data-testid="stSidebar"] { background:#fff; border-right:1px solid #e5e8f1; }
+.design-masthead { padding:.6rem 0 1rem; border-bottom:1px solid #dedfec; margin-bottom:.6rem; }
+.eyebrow { color:#6046d7; font-weight:700; letter-spacing:.16em; font-size:.72rem; }
+.design-masthead h1 { font-family:Arial,sans-serif; max-width:850px; font-size:2.5rem!important; font-weight:700; line-height:1.05; color:#222947; }
+.design-masthead p { color:#67718b; font-size:1.06rem; }
+.st-key-summary_cards [data-testid="stColumn"] { background:white; border:1px solid #e4e6f1; border-radius:16px; padding:1.15rem; }
+[data-testid="stMetricValue"] { color:#6046d7; }
+[data-baseweb="tab-list"] { gap:1.5rem; border-bottom:1px solid #dedfec; }
+button[role="tab"][aria-selected="true"] { color:#6046d7; font-weight:700; }
+[data-testid="stBaseButton-primary"] { background:#6046d7; border-color:#6046d7; }
+[data-testid="stVerticalBlockBorderWrapper"] { border-radius:16px; }
+@media (max-width:1100px) {
+  .st-key-horizon_layout [data-testid="stHorizontalBlock"] { flex-wrap:wrap; }
+  .st-key-horizon_layout [data-testid="stHorizontalBlock"] > [data-testid="stColumn"] { flex:1 1 100%; width:100%; }
+}
+@media (max-width:700px) { .design-masthead h1 { font-size:2rem!important; } }
