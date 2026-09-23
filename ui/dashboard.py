@@ -81,7 +81,7 @@ def show_forecast(data, selected, turbine, forecast_id, labels, synthetic, degra
     with st.container(key="horizon_layout"):
         chart_area, detail_area = st.columns([3, 1.2], gap="large")
     with chart_area:
-        with st.container(border=True):
+        with st.container(border=True, key="forecast_panel"):
             st.subheader("Hourly forecast")
             st.caption(f"{TURBINES[turbine]} · {len(selected)} hourly targets · All target labels mark interval starts in UTC.")
             controls = st.columns(2)
@@ -104,7 +104,7 @@ def show_forecast(data, selected, turbine, forecast_id, labels, synthetic, degra
             if february.any() and not actuals.loc[february, "power_normalized"].notna().any():
                 st.caption("Actuals unavailable for February 2026. February forecast accuracy cannot be measured from the supplied files.")
     with detail_area:
-        with st.container(border=True):
+        with st.container(border=True, key="details_panel"):
             st.markdown("**Forecast details**")
             columns = [st.container() for _ in range(4)]
             values = [provenance_values(selected, "issued_at", timestamp=True), provenance_values(selected, "weather_run_time", timestamp=True), provenance_values(selected, "model_version"), "Degraded" if degraded else "OK"]

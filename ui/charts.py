@@ -9,7 +9,7 @@ def forecast_chart(selected: pd.DataFrame, *, synthetic: bool, overlap: pd.DataF
     selected = selected.sort_values("valid_time")
     figure = go.Figure(go.Scatter(
         x=selected.valid_time, y=selected.power_normalized,
-        name="Selected forecast", mode="lines", line={"color": forecast_color, "width": 3},
+        name="Selected forecast", mode="lines", line={"color": forecast_color, "width": 2.5},
         hovertemplate="%{x|%d %b %Y, %H:%M} UTC<br>Normalized power: %{y:.3f}<extra>Selected forecast</extra>",
     ))
     if overlap is not None and not overlap.empty:
@@ -29,7 +29,7 @@ def forecast_chart(selected: pd.DataFrame, *, synthetic: bool, overlap: pd.DataF
     figure.update_layout(
         height=400, margin={"l": 65, "r": 15, "t": 45, "b": 90},
         title={"text": "Synthetic example · not model results" if synthetic else "Published forecast", "font": {"size": 13}},
-        font={"family": "Arial, sans-serif", "color": text_color},
+        font={"family": "Segoe UI, Helvetica Neue, Arial, sans-serif", "size": 12, "color": text_color},
         hoverlabel={"bgcolor": "#ffffff", "font_color": text_color},
         paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
         hovermode="x unified", legend={"orientation": "h", "y": -.25, "x": 0},

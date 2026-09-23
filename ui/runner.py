@@ -39,7 +39,7 @@ def displayed_directory(base_directory: Path) -> Path:
 def render_run_controls(base_directory: Path) -> Path:
     """Run on a button press, then return the last valid artifact directory."""
     directory = displayed_directory(base_directory)
-    with st.container(border=True):
+    with st.container(border=True, key="run_panel"):
         st.markdown("**Run the forecasting agent**")
         st.caption(
             "One click retrieves weather, prepares data, runs the model, analyzes and publishes "

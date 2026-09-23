@@ -1,17 +1,10 @@
-[data-testid="stAppViewContainer"] { background: #f6f8fb; }
-[data-testid="stMainBlockContainer"] { max-width: 1180px; padding-top: 3.5rem; padding-bottom: 3rem; }
-[data-testid="stSidebar"] { background: #edf2f7; }
-h1 { font-size: 2rem !important; letter-spacing: -0.035em; color: #183044; }
-h2, h3 { color: #183044; letter-spacing: -0.02em; }
-[data-testid="stVerticalBlockBorderWrapper"] { background: white; border-radius: 12px; }
-[data-testid="stMetricValue"] { font-size: 1.5rem; }
-[data-testid="stCaptionContainer"] { color: #526476; }
-[data-testid="stCaptionContainer"] p { color: #526476 !important; }
-button { border-radius: 8px !important; }
-.design-masthead h1 { padding: .65rem 0 !important; margin:0; }
-.design-masthead p { margin: .5rem 0 0; }
-@media (max-width:700px) {
-  .design-masthead h1 { font-size:2.4rem!important; }
-  [data-testid="stMainBlockContainer"] { padding-top:1.5rem; }
-  [data-testid="stMetricValue"] { font-size:1.4rem!important; }
+/* Shared layout. Visual tokens and typography live in horizon.css. */
+[data-testid="stMainBlockContainer"] {
+  max-width: 1180px;
+  padding-top: 3.5rem;
+  padding-bottom: 3rem;
+}
+@media (max-width: 700px) {
+  /* Leave room for Streamlit's fixed toolbar on small screens. */
+  [data-testid="stMainBlockContainer"] { padding-top: 4rem; }
 }
