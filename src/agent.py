@@ -25,6 +25,7 @@ def tool(name, description, boolean=None):
 
 TOOLS = [
     tool("fetch_weather", "Fetch eligible archived weather. Try latest first; older_run=true permits one preceding run after failure.", "older_run"),
+    tool("prepare_inputs", "Prepare hourly observations and ordered weather inputs after fetching, before validation. Future actuals never become prediction features."),
     tool("validate_inputs", "Validate weather coverage, model cutoff and temporal guards; returns limitations."),
     tool("predict_power", "Run the selected numerical model. fallback=true uses the empirical curve after model failure. May skip unchanged inputs.", "fallback"),
     tool("compare_forecasts", "Compare a prediction with the preceding forecast on matching target hours."),
@@ -42,7 +43,7 @@ def run_agent(run, client=None, model=None):
     model = model or os.environ.get("OPENAI_MODEL", "gpt-4.1-mini")
     conversation = [{"role": "user", "content": f"Produce and publish a 48-hour normalized wind-power forecast for {run.issue.isoformat()}."}]
     instructions = (
-        "You operate a guarded wind forecasting system. Fetch latest eligible weather, validate, predict, compare, publish. "
+        "You operate a guarded wind forecasting system. Fetch latest eligible weather, prepare_inputs, validate, predict, compare, publish. "
         "Choose recovery when tools fail: one older weather run on fetch failure, empirical curve on prediction failure. "
         "Never invent numerical predictions or historical availability. Archive provenance is unresolved; degraded outputs are expected. "
         "Stop after publication or unchanged-input skip. Do not call further tools after completion. "

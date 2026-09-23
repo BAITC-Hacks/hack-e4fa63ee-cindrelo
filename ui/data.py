@@ -84,6 +84,15 @@ def load_manifest(directory: Path) -> dict:
         raise ArtifactError(f"{filename}: description must be a string.")
     if not isinstance(manifest["warnings"], list) or not all(isinstance(x, str) for x in manifest["warnings"]):
         raise ArtifactError(f"{filename}: warnings must be an array of strings.")
+    metadata = manifest.get("forecast_metadata", {})
+    if not isinstance(metadata, dict):
+        raise ArtifactError(f"{filename}: forecast_metadata must be an object keyed by forecast ID.")
+    for item in metadata.values():
+        if (not isinstance(item, dict) or not isinstance(item.get("description"), str)
+                or not isinstance(item.get("warnings"), list)
+                or not all(isinstance(w, str) for w in item["warnings"])
+                or not isinstance(item.get("metrics_scope", ""), str)):
+            raise ArtifactError(f"{filename}: invalid per-forecast description, warnings or metric scope.")
     return manifest
 
 

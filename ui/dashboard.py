@@ -1,9 +1,10 @@
-"""Cindrelo's offline, read-only dashboard for contract-v1 output files."""
+"""Cindrelo's forecast dashboard with an explicit full-cycle run action."""
 import streamlit as st
 import pandas as pd
 
 from ui.charts import forecast_chart
 from ui.designs import apply_theme, masthead, summary_cards
+from ui.runner import displayed_directory, render_run_controls
 from ui.data import ArtifactError, ROOT, TURBINES, aligned_actuals, compare_forecasts, export_filename, export_forecast, forecast_choices, load_dashboard, output_directory, previous_issuances
 
 SYNTHETIC_BANNER = "SYNTHETIC DEMO DATA — not model results"
@@ -121,7 +122,7 @@ def main():
     st.set_page_config(page_title="Cindrelo — Wind power forecast", page_icon="🌬️", layout="wide")
     apply_theme()
     try:
-        directory = output_directory()
+        directory = displayed_directory(output_directory())
     except ArtifactError as exc:
         st.error(str(exc))
         st.stop()
@@ -129,14 +130,18 @@ def main():
         st.subheader("Cindrelo")
         st.caption("Forecast review")
         st.divider()
+        directory_display = st.container()
+        st.caption("Refresh reloads saved artifacts. It does not run the forecasting pipeline.")
+    masthead()
+    intro, refresh = st.columns([5, 1])
+    intro.caption("Cindrelo — Wind power forecast · Hourly normalized power for two wind turbines")
+    refresh.button("Refresh", width="stretch", help="Reload saved files only. No weather requests or model training.")
+    directory = render_run_controls(directory)
+    with directory_display:
         st.markdown("**Loaded directory**")
         st.code(str(directory.relative_to(ROOT)) if directory.is_relative_to(ROOT) else str(directory), language=None, wrap_lines=True)
         with st.expander("Resolved path"):
             st.code(str(directory), language=None, wrap_lines=True)
-        st.button("Refresh", width="stretch", help="Reload saved files only. No weather requests or model training.")
-        st.caption("Refresh reloads saved artifacts. It does not run the forecasting pipeline.")
-    masthead()
-    st.caption("Cindrelo — Wind power forecast · Hourly normalized power for two wind turbines")
     try:
         data = load_dashboard(directory)
     except ArtifactError as exc:
@@ -149,8 +154,6 @@ def main():
         st.sidebar.warning(SYNTHETIC_BANNER)
     else:
         st.sidebar.info("Published model output · UTC")
-    with st.sidebar.expander("About this dataset"):
-        st.text(data.manifest["description"])
     choices = forecast_choices(data.forecasts)
     ids = choices.forecast_id.tolist()
     labels = {row.forecast_id: f"{utc(row.issued_at)} · {row.forecast_id}" for row in choices.itertuples()}
@@ -160,11 +163,14 @@ def main():
     columns = st.columns([1, 2])
     turbine = columns[0].selectbox("Turbine", list(TURBINES), format_func=TURBINES.get, key="turbine")
     forecast_id = columns[1].selectbox("Forecast issuance (UTC)", ids, format_func=labels.get, key="forecast_id")
+    selected_metadata = data.manifest.get("forecast_metadata", {}).get(forecast_id, data.manifest)
+    with st.sidebar.expander("About this dataset"):
+        st.text(selected_metadata["description"])
     selected = data.forecasts[data.forecasts.forecast_id.eq(forecast_id) & data.forecasts.turbine_id.eq(turbine)].sort_values("valid_time")
     degraded = selected.status.eq("degraded").any()
     if degraded:
         st.warning("Degraded forecast — review the source warnings before using this forecast.")
-    for warning in data.manifest["warnings"]:
+    for warning in selected_metadata["warnings"]:
         if warning != SYNTHETIC_BANNER:
             st.sidebar.warning(warning)
     failures = data.events[data.events.forecast_id.eq(forecast_id) & data.events.status.eq("failed")]
@@ -184,6 +190,8 @@ def main():
     with forecast_tab:
         forecast()
     with metrics_tab:
+        if selected_metadata.get("metrics_scope"):
+            st.caption(selected_metadata["metrics_scope"])
         show_metrics(data.metrics, turbine, synthetic)
     with trace_tab:
         show_events(data.events, forecast_id, synthetic)

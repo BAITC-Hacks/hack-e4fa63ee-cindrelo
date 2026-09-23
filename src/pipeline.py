@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 
 from .common import ROOT, FORECAST_COLUMNS, METRIC_COLUMNS, digest, iso, utc, warnings, write_csv, write_json
-from .data import load_hourly
+from .data import load_hourly, prepare
 from .model import bundle_for_issue, predict
 from .weather import Weather, eligible_run
 
@@ -43,7 +43,8 @@ def read_forecasts(directory):
 class ForecastRun:
     """Stateful guarded tools shared by deterministic and LLM controllers."""
 
-    def __init__(self, cfg, issue, output, offline=False, bundle=None):
+    def __init__(self, cfg, issue, output, offline=False, bundle=None, on_event=None,
+                 hourly=None, refresh_observations=False):
         self.cfg, self.issue, self.output = cfg, utc(issue), Path(output)
         self.provider = Weather(cfg, offline)
         self.bundle = bundle if bundle is not None else bundle_for_issue(self.issue, cfg)
@@ -55,11 +56,18 @@ class ForecastRun:
         self.forecast_id = "attempt-" + self.issue.strftime("%Y%m%dT%H%MZ")
         self.fetch_count = 0
         self.used_older = False
+        self.on_event = on_event
+        self.hourly = hourly
+        self.refresh_observations = refresh_observations
+        self.prepared = False
 
     def event(self, tool, status, message):
-        self.events.append({"forecast_id": self.forecast_id, "timestamp": iso(self.issue),
+        event = {"forecast_id": self.forecast_id, "timestamp": iso(self.issue),
                             "tool": tool, "status": status, "message": message,
-                            "executed_at": iso(pd.Timestamp.now(tz="UTC"))})
+                            "executed_at": iso(pd.Timestamp.now(tz="UTC"))}
+        self.events.append(event)
+        if self.on_event is not None:
+            self.on_event({**event, "issued_at": iso(self.issue)})
 
     def flush_events(self):
         self.output.mkdir(parents=True, exist_ok=True)
@@ -81,12 +89,28 @@ class ForecastRun:
         self.weather = self.provider.horizon(self.issue, run)
         self.used_older = older_run
         self.validated = False
+        self.prepared = False
+        for retrieval in getattr(self.provider, "retrievals", []):
+            self.event("weather_source", "warning" if retrieval["source"] == "cached_fallback" else "completed",
+                       json.dumps(retrieval))
         return {"rows": len(self.weather), "run_time": iso(run), "older_run": older_run,
                 "provenance": "unverified archive; publication delay assumed"}
+
+    def prepare_inputs(self):
+        if self.weather is None:
+            raise ValueError("Fetch weather before preparing inputs")
+        if self.hourly is None:
+            self.hourly = prepare(self.cfg)[0] if self.refresh_observations else load_hourly(self.cfg)
+        self.weather = self.weather.sort_values(["turbine_id", "valid_time"]).reset_index(drop=True)
+        self.prepared = True
+        return {"weather_rows": len(self.weather), "complete_observation_hours": int(self.hourly.complete.sum()),
+                "message": "Prepared hourly observations and ordered forecast inputs; future actuals are not model features"}
 
     def validate_inputs(self):
         if self.weather is None:
             raise ValueError("Fetch weather first")
+        if not self.prepared:
+            raise ValueError("Prepare inputs before validation")
         if self.weather.shape[0] != 48 * len(self.cfg["turbines"]):
             raise ValueError("Incomplete weather horizon")
         if utc(self.bundle["trained_until"]) > self.issue:
@@ -98,6 +122,7 @@ class ForecastRun:
         if not self.validated:
             raise ValueError("Validate inputs before prediction")
         method = "curve" if fallback else self.bundle["selected"]
+        self.prediction_method = method
         identity = digest({"issue": iso(self.issue), "weather": self.weather.weather_hash.iloc[0],
                            "config": self.cfg, "model": self.bundle["version"], "method": method})
         self.forecast_id = self.issue.strftime("%Y%m%dT%H%MZ") + "-" + identity[:12]
@@ -139,23 +164,48 @@ class ForecastRun:
         previous = read_forecasts(self.output)
         combined = self.forecast if previous.empty else pd.concat([previous, self.forecast], ignore_index=True)
         validate_forecasts(combined)
-        actuals = load_hourly(self.cfg)
+        actuals = self.hourly
         actuals = actuals.loc[actuals.complete & actuals.valid_time.between(combined.valid_time.min(), combined.valid_time.max()),
                               ["valid_time", "turbine_id", "power_normalized"]]
         metric_path = ROOT / "artifacts/metrics.csv"
-        metrics = pd.read_csv(metric_path, encoding="utf-8-sig") if metric_path.exists() else pd.DataFrame(columns=METRIC_COLUMNS)
+        metrics = (pd.DataFrame(self.bundle["metrics"], columns=METRIC_COLUMNS) if "metrics" in self.bundle
+                   else pd.read_csv(metric_path, encoding="utf-8-sig") if metric_path.exists()
+                   else pd.DataFrame(columns=METRIC_COLUMNS))
         write_csv(self.output / "forecasts.csv", combined)
         write_csv(self.output / "actuals.csv", actuals)
         write_csv(self.output / "metrics.csv", metrics)
-        write_json(self.output / "manifest.json", {"schema_version": 1, "data_kind": "model_output",
+        manifest = {"schema_version": 1, "data_kind": "model_output",
                     "timezone": "UTC", "target_unit": "normalized_power",
                     "description": "Archived-weather model forecasts; historical provenance remains unverified.",
-                    "warnings": warnings(self.cfg), "config": self.cfg})
+                    "warnings": warnings(self.cfg), "config": self.cfg}
+        if self.bundle["selected"] == "aifs_gem":
+            manifest.update({
+                "description": "AIFS/GEM wind model for hours 25–48; empirical curve for hours 1–24. "
+                               "Historical replay with conditional weather availability.",
+                "model_policy": self.bundle["policy"],
+                "active_method": self.prediction_method,
+                "model_version": self.bundle["version"],
+                "metrics_scope": self.bundle["manifest"]["metrics_scope"],
+                "weather_provenance": getattr(self.provider, "provenance", {}),
+            })
+            manifest["warnings"] += [
+                self.bundle["manifest"]["metrics_scope"],
+                "January was reused for research diagnostics. February actuals are unavailable.",
+                "Additional providers use fixed lead offsets with an assumed eight-hour publication delay; original publication times are unverified.",
+            ]
+            if self.prediction_method == "curve":
+                manifest["description"] = "Empirical-curve recovery forecast for all 48 hours; AIFS/GEM prediction failed."
+                manifest["warnings"].append("Displayed AIFS/GEM research metrics do not score this fallback forecast.")
+        manifest_path = self.output / "manifest.json"
+        saved = json.loads(manifest_path.read_text(encoding="utf-8-sig")) if manifest_path.exists() else {}
+        metadata = saved.get("forecast_metadata", {})
+        metadata[self.forecast_id] = manifest.copy()
+        write_json(manifest_path, {**manifest, "forecast_metadata": metadata})
         self.done = True
         return {"published": True, "forecast_id": self.forecast_id, "directory": str(self.output)}
 
     def call(self, tool, arguments=None):
-        allowed = {"fetch_weather", "validate_inputs", "predict_power", "compare_forecasts", "publish_forecast"}
+        allowed = {"fetch_weather", "prepare_inputs", "validate_inputs", "predict_power", "compare_forecasts", "publish_forecast"}
         if tool not in allowed or self.done:
             raise ValueError("Tool unavailable in current state")
         self.event(tool, "started", "Executing guarded tool")
@@ -175,6 +225,7 @@ def run_deterministic(run):
         except (OSError, ValueError):
             run.event("controller", "warning", "Latest eligible weather failed; trying preceding run")
             run.call("fetch_weather", {"older_run": True})
+        run.call("prepare_inputs")
         run.call("validate_inputs")
         try:
             result = run.call("predict_power")

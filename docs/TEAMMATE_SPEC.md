@@ -92,11 +92,11 @@ After the first screen works:
 - Surface manifest warnings, degraded status and errors visibly. Empty metrics or event files should produce helpful empty states, not crash the app.
 - Add `docs/DEMO.md`: startup instructions, a 2–3 minute walkthrough and screenshots. Screenshots of fixture data must retain the synthetic banner.
 
-Actual generation/rerun controls are a later integration task. Until the backend callable exists, browsing two saved forecasts is a revision viewer, not evidence that an agent just ran. Do not add a fake “Run agent” button or fake live progress.
+Generation is now integrated through `src.service.run_forecast_cycle`, called lazily by `ui/runner.py` only when **Run forecast cycle** is pressed. It retrieves weather, prepares data, predicts, compares, publishes and optionally advances the replay clock 12 hours for an automatic revision. Progress comes from backend event callbacks. Viewing saved files or pressing Refresh still does not execute an agent. See [DEMO.md](DEMO.md) for the current walkthrough.
 
 ## Data contract v1
 
-All files live in one configured directory. CSVs use UTF-8, comma delimiters and a header. JSON uses standard JSON, not NaN. Unknown extra fields may be ignored; missing required fields should be explained to the user. Backend publishes a complete directory before asking the user to refresh; atomic snapshot handling can be added during integration.
+All files live in one configured directory. CSVs use UTF-8, comma delimiters and a header. JSON uses standard JSON, not NaN. Unknown extra fields may be ignored; missing required fields should be explained to the user. The dashboard service returns a complete immutable snapshot directory after the requested cycle succeeds. Its session output base contains `current.json`, an atomic pointer to that snapshot. CLI outputs retain the existing five-file directory contract; refresh after the CLI finishes.
 
 All timestamps are ISO 8601 UTC with a `Z` suffix. These are application/output timestamps; converting the raw CSV timezone is the backend's responsibility. `valid_time` labels the **start** of an hourly target interval. `horizon_hours = (valid_time - issued_at) / 1 hour + 1`; issuance is on the hour, so horizon 1 is the first interval beginning at issuance. This convention resolves the ambiguous initial proposal and must be used consistently by both owners.
 
@@ -149,7 +149,7 @@ One JSON object per line with `forecast_id`, `timestamp`, `tool`, `status`, `mes
 
 ## Acceptance checklist
 
-- Fresh setup starts with documented dependencies and fixture data, without keys/network calls during app use.
+- Fresh setup displays fixture data without keys/network calls; running the live agent is an explicit action requiring backend dependencies and a key.
 - Changing turbine/issuance updates the chart, metadata and download correctly.
 - The fixture has two issuances and 192 forecast rows; each selected issuance exports 96 rows.
 - The two fixture issuances share 24 target hours per turbine; comparison uses exactly that overlap.

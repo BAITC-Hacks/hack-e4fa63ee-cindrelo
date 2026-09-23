@@ -58,7 +58,10 @@ def predict(bundle, weather, method=None):
     if (weather.issued_at < utc(bundle["trained_until"])).any():
         raise ValueError("Model trained on observations after forecast issuance")
     method = method or bundle["selected"]
-    if method == "catboost":
+    if method == "aifs_gem":
+        from .candidate import predict as predict_candidate
+        prediction = predict_candidate(weather, bundle)
+    elif method == "catboost":
         prediction = bundle["model"].predict(features(weather))
     elif method == "mean":
         prediction = weather.turbine_id.map(bundle["means"]).to_numpy()

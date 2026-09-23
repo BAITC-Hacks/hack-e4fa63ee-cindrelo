@@ -1,0 +1,49 @@
+{
+  "verified_at": "2026-09-23T10:12:56.601715Z",
+  "tested_commit": "03f90bb7ef41f3a441c061edc24b00079b56cc10",
+  "python": "3.14.7",
+  "platform": "Darwin",
+  "controller": "live OpenAI; archived weather from local cache",
+  "forecast_ids": [
+    "20260109T1900Z-724f6cdb7431",
+    "20260110T0700Z-6071b57ce4b1"
+  ],
+  "forecast_rows": 192,
+  "overlap_hours_per_turbine": 36,
+  "mean_absolute_revision": {
+    "turbine_1": 0.05222142806033752,
+    "turbine_2": 0.05151682013019962
+  },
+  "completed_agent_runs": 3,
+  "unchanged_input_skips": 1,
+  "predictions_byte_identical_after_repeat": true,
+  "forecasts_match_committed_example": true,
+  "dashboard_apptest": "passed for both turbines, issuance changes, refresh and February no-actuals view",
+  "february_replay_rows": 2784,
+  "february_versions": 29,
+  "february_day_ahead_rows": 1344,
+  "test_suite": {
+    "tests_passed": 25,
+    "subtests_passed": 10
+  },
+  "scope": "Integrated main; PR #7 designs still open at rehearsal",
+  "submission_destination": "Organizer-created GitHub repository",
+  "deadline": "2026-09-23; exact hour not provided",
+  "warnings": [
+    "Raw timestamps assumed Asia/Almaty, interval starts; organizer confirmation pending.",
+    "Weather availability assumed initialization + 8 hours; historical publication provenance unverified.",
+    "Open-Meteo ECMWF IFS archive may contain hindcasts; as-issued compliance is not established.",
+    "Power is normalized, not MW/MWh; February actuals are absent from supplied data.",
+    "Weather: Open-Meteo (https://open-meteo.com/), ECMWF; CC BY 4.0 attribution."
+  ],
+  "backup_restore": {
+    "archive_sha256": "84639d663281bd247d332028af81d4f955890d0da0f6b516764f308e904d753b",
+    "source_commit": "12c254059832bec7bdbbfad11c7352b876868272",
+    "verified_payload_files": 451,
+    "network_disabled": true,
+    "api_key_present": false,
+    "january_predictions_match": true,
+    "february_predictions_match": true,
+    "dependency_environment": "Existing installed virtual environment; package supplies source/cache/models, not dependency wheels"
+  }
+}

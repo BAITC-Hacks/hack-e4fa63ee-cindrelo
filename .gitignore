@@ -9,3 +9,4 @@ data/
 artifacts/
 outputs/
 catboost_info/
+.DS_Store

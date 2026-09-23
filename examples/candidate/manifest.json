@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "config_hash": "81f0218f0ca44e6f9aaf5cca2ad16e5ee49db7aa878e8230aff04c7826c90c6c",
+  "bundles": [
+    {
+      "file": "boundary.json",
+      "sha256": "6f40ab4e8935288aa37ef0f3bea0ce41f6ce84600d377eadf47c90fcc7dbae77",
+      "trained_until": "2025-12-30T19:00:00Z",
+      "version": "aifs-gem-ab43abf9be6db491"
+    },
+    {
+      "file": "january.json",
+      "sha256": "108a5f06ce796a26fdffa23c64bbed4b5987f2584c2b78407c17912e77f91c89",
+      "trained_until": "2025-12-31T19:00:00Z",
+      "version": "aifs-gem-28ccce2ba445de6f"
+    }
+  ],
+  "policy": {
+    "horizons_1_24": "empirical_curve",
+    "horizons_25_48": "add_wind_cat",
+    "update_issuances": "same fixed recipe; 12-hour updates are operational replay, not separately accuracy-validated",
+    "publication_provenance_verified": false,
+    "forecast_publication_delay_hours_assumed": 8,
+    "reporting_delay_after_interval_end_hours": 2
+  },
+  "selection": {
+    "created_at": "2026-09-23T12:20:46.366681+00:00",
+    "selected": "add_wind_cat",
+    "december1_29_mae": {
+      "add_wind_cat": 0.19228854872227472,
+      "add_cat_live": 0.19268968945570733,
+      "add_hist": 0.1929305623153124,
+      "add_cat": 0.19460918681581696,
+      "blend_add_cat": 0.19813339281236803,
+      "no_extra_cat": 0.2001892247263643,
+      "curve": 0.21998194175424646
+    },
+    "max_selection_target_available_at": "2025-12-29T21:00:00Z",
+    "first_january_issue": "2025-12-30T19:00:00Z"
+  },
+  "selection_sha256": "d5641e504af926523269b740a864216c65797e2b2da313581c96b9bfc2069c51",
+  "research_protocol_sha256": "34a713218ab5ec741a39198e43cb23456dcb5891380148792000243f5b9f330a",
+  "metrics": [
+    {
+      "model": "aifs_gem",
+      "turbine_id": "turbine_1",
+      "horizon_bucket": "25-48",
+      "mae": 0.1589309479669129,
+      "rmse": 0.226606581106965,
+      "n_samples": 744,
+      "period_start": "2025-12-31T19:00:00Z",
+      "period_end": "2026-01-31T19:00:00Z"
+    },
+    {
+      "model": "aifs_gem",
+      "turbine_id": "turbine_2",
+      "horizon_bucket": "25-48",
+      "mae": 0.1625440281768076,
+      "rmse": 0.2340415142107652,
+      "n_samples": 744,
+      "period_start": "2025-12-31T19:00:00Z",
+      "period_end": "2026-01-31T19:00:00Z"
+    }
+  ],
+  "metrics_scope": "January research evaluation for hours 25–48 only; the full 48-hour hybrid and 12-hour revisions are not independently evaluated.",
+  "january_is_reused_diagnostic": true,
+  "target_005_met": false,
+  "checksum_policy": "SHA-256 with CRLF normalized to LF for text; native CBM bytes unchanged"
+}

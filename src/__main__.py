@@ -13,6 +13,12 @@ def main():
     sub.add_parser("prepare")
     demo = sub.add_parser("demo", help="Recompute two real forecasts offline from the bundled curve and weather")
     demo.add_argument("--output", default="outputs/offline-demo")
+    cycle = sub.add_parser("cycle", help="Run the dashboard's selected AIFS/GEM model and 12-hour revision")
+    cycle.add_argument("--issue", default="2026-01-09T19:00:00Z")
+    cycle.add_argument("--output", default="outputs/candidate-cycle")
+    cycle.add_argument("--offline", action="store_true")
+    cycle.add_argument("--agent", action="store_true")
+    cycle.add_argument("--no-update", action="store_true")
     training = sub.add_parser("train")
     training.add_argument("--offline", action="store_true")
     for command in ["forecast", "replay"]:
@@ -33,6 +39,15 @@ def main():
     elif args.command == "train":
         from .training import train
         train(cfg, args.offline)
+    elif args.command == "cycle":
+        from .service import run_forecast_cycle
+        output = Path(args.output)
+        if not output.is_absolute():
+            output = ROOT / output
+        print(json.dumps(run_forecast_cycle(
+            issued_at=args.issue, output=output,
+            controller="agent" if args.agent else "deterministic",
+            offline=args.offline, include_update=not args.no_update), indent=2))
     elif args.command == "demo":
         from .pipeline import ForecastRun, run_deterministic
         from .weather import Weather
