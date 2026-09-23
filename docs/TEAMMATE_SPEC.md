@@ -6,13 +6,34 @@ Build a simple Streamlit dashboard that makes the forecasting pipeline understan
 
 You own `app.py`, `ui/`, `assets/`, `docs/DEMO.md`, and `requirements-ui.txt`. Use Streamlit, pandas and Plotly. Put UI dependencies in `requirements-ui.txt`; the backend owner will integrate installation instructions and pin dependencies before submission.
 
+| Owner | Branch | Editable files/folders |
+|---|---|---|
+| Dashboard teammate | `feat/dashboard` | `ui/`, `assets/`, `app.py`, `requirements-ui.txt`, `docs/DEMO.md` |
+| Backend owner | `feat/forecast-pipeline` | `src/`, backend configuration, training/weather/agent code, root README and shared dependency integration |
+
+Keep all dashboard logic in `ui/`. Root `app.py` is your thin Streamlit entry point; the backend owner will not edit it concurrently. Suggested structure:
+
+```text
+app.py                  # imports and calls ui.dashboard.main
+ui/
+  __init__.py
+  dashboard.py          # page layout, selectors and main()
+  data.py               # load/validate the artifact files
+  charts.py             # Plotly chart functions
+assets/                 # optional screenshots and presentation assets
+requirements-ui.txt     # UI dependencies only
+docs/DEMO.md             # your setup notes and demo walkthrough
+```
+
+These module names are suggestions, not a requirement to create empty abstractions. The folder boundary is the agreement. Do not edit `src/`, root README, backend config or shared dependency files in UI PRs. Record installation notes in `docs/DEMO.md` for the backend owner to incorporate.
+
 The backend owner owns `src/`, training, weather acquisition, the agent, real `outputs/`, dependency integration and the root README. Treat `docs/fixtures/dashboard/` and the contracts below as shared read-only inputs. Propose contract changes in your PR before implementing them. This prevents conflicting edits.
 
 OpenAI credits are available for the backend agent ($50 activated; the teammate's additional credits are not yet activated). The dashboard must require neither an API key nor a network connection. Never put keys in source, fixture files, logs, screenshots or PRs.
 
 ## Start here
 
-After this specification is merged into `origin/main`:
+Use your own local clone/workspace. Do not switch branches inside another person's active checkout. Once this specification is merged into `origin/main`, run from the repository root:
 
 ```sh
 git fetch origin
@@ -22,13 +43,30 @@ source .venv/bin/activate
 python -m pip install streamlit pandas plotly
 ```
 
-Create `app.py`, then run `streamlit run app.py`. Default to the fixture directory. Support `CINDRELO_OUTPUT_DIR` as the directory override for integration:
+If the handoff branch has been pushed but is not merged yet, start immediately from it instead: after `git fetch origin`, use `git switch -c feat/dashboard origin/docs/dashboard-handoff` in place of the branch command above. Your draft PR still targets `main`; mention that it depends on the handoff PR, which should merge first. If neither remote branch contains the spec/fixtures, ask the backend owner to push the handoff branch.
+
+**First 15 minutes:** create `ui/__init__.py`, implement `main()` in `ui/dashboard.py`, load the manifest and forecasts from `docs/fixtures/dashboard/`, and display the synthetic banner plus one turbine's first forecast chart. No backend code, credentials or weather downloads are needed.
+
+Use this complete root `app.py` entry point:
+
+```python
+from ui.dashboard import main
+
+if __name__ == "__main__":
+    main()
+```
+
+Write the UI packages into `requirements-ui.txt` and record tested versions before the PR is ready. Subsequent setup should use `python -m pip install -r requirements-ui.txt`.
+
+Run `streamlit run app.py`. Default to `docs/fixtures/dashboard/`. Support `CINDRELO_OUTPUT_DIR` as the directory override for integration:
 
 ```sh
 CINDRELO_OUTPUT_DIR=outputs/dashboard streamlit run app.py
 ```
 
 Use paths relative to the repository/app location, not the caller's current working directory. Show the loaded directory and a Refresh button. Refresh only reloads files; it does not request weather or retrain models. If files are absent or malformed, display an actionable error with the filename, without a traceback or silent fallback to synthetic data.
+
+In `ui/data.py`, the repository root is `Path(__file__).resolve().parents[1]`. Resolve relative directory overrides against that root and accept absolute overrides unchanged. Keep all file loading behind UI helper functions; consume published artifacts instead of importing unfinished backend modules. Real outputs will use the same contract, so integration should only require changing the directory setting.
 
 ## First PR: forecast screen
 
@@ -132,6 +170,8 @@ Manual checks and one screenshot are sufficient for the first PR. Do not spend t
 - Push with `git push -u origin feat/dashboard`, then open the PR against `main` on GitHub.
 - After the first PR is merged, create `feat/dashboard-evidence` from updated `origin/main` for the second PR. Keep dependencies between PRs explicit if the first is still open.
 - Backend owner will use `feat/forecast-pipeline`; ownership of shared files/contracts is coordinated before editing.
+- Separate folders are the primary conflict prevention rule; separate branches do not prevent conflicts in shared files. Agree any contract changes with the backend owner before coding them, and let that owner update the shared spec/fixtures.
+- Merge the first usable forecast screen early, before polishing it. Validate against the first real backend export as soon as it is available; do not defer integration until both sides are finished.
 - Before integration, fetch `origin` and incorporate the latest `origin/main`; avoid rewriting a shared branch or force-pushing main. The backend owner reviews/merges UI PRs and handles final integration.
 
 ## Cut order if time runs short
