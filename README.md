@@ -2,7 +2,7 @@
 
 Hourly normalized-power forecasts for two wind turbines, driven by archived weather. A bounded OpenAI tool controller fetches weather, validates temporal eligibility, runs a numerical model, compares revisions and publishes dashboard files. The same guarded tools also run deterministically without an API key.
 
-**Implemented:** data preparation, weather caching, December model selection, January holdout evaluation, February replay, agent execution/recovery, real dashboard examples and an offline demonstration. The Streamlit interface is developed separately on the dashboard branch.
+**Implemented:** data preparation, weather caching, December model selection, January holdout evaluation, February replay, agent execution/recovery, real dashboard examples, an offline demonstration, and a Streamlit dashboard with forecasts, revisions, actuals, metrics and saved tool traces.
 
 **Limitations:** source timezone and interval convention are assumed; weather publication delay is assumed; the archive's historical as-issued provenance is unverified. Forecasts carry `degraded` status and visible warnings. February has no supplied observations, so no February accuracy is claimed.
 
@@ -19,7 +19,7 @@ python -m src demo
 
 `demo` **recomputes** two real January forecasts from the bundled empirical curve and four cached weather responses. It needs no network, API key or prior training. Outputs go to `outputs/offline-demo/`. Running it again skips numerical prediction for unchanged inputs. The included source turbine CSVs supply actuals.
 
-The UI can immediately consume `examples/dashboard/`: 192 genuine forecast rows, matching actuals, measured January metrics, and traces from two successful live OpenAI runs. After the dashboard branch is merged:
+The UI can immediately consume `examples/dashboard/`: 192 genuine forecast rows, matching actuals, measured January metrics, and traces from two successful live OpenAI runs:
 
 ```sh
 python -m pip install -r requirements-ui.txt
@@ -29,6 +29,33 @@ CINDRELO_OUTPUT_DIR=outputs/offline-demo streamlit run app.py
 ```
 
 `docs/fixtures/dashboard/` remains synthetic UI test data. `examples/dashboard/` contains model results. Both follow [the same contract](docs/TEAMMATE_SPEC.md).
+
+### Windows PowerShell: enable UTF-8
+
+Verified with Python 3.12 on Windows. Backend text-file reads and writes currently use the system default encoding. On Windows installations where that default is not UTF-8, the bundled weather JSON can be decoded incorrectly and raise `Weather cache checksum mismatch`, followed by an unavailable older-cache error. Previously generated metadata can also fail to decode. The cache files are valid UTF-8; do not disable checksum validation or change their hashes.
+
+Run Python with `-X utf8` consistently for backend commands and the dashboard. This option must precede `-m`:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements-backend.txt -r requirements-ui.txt
+.\.venv\Scripts\python.exe -X utf8 -m src demo
+$env:CINDRELO_OUTPUT_DIR = "outputs/offline-demo"
+.\.venv\Scripts\python.exe -X utf8 -m streamlit run app.py --browser.gatherUsageStats false
+```
+
+To view the committed live-agent examples instead, set `$env:CINDRELO_OUTPUT_DIR = "examples/dashboard"` before starting Streamlit. The offline demo uses the deterministic controller; its new events do not represent a live OpenAI run.
+
+If an earlier run already wrote metadata with the Windows default encoding, regenerate preparation metadata and use a fresh output directory:
+
+```powershell
+.\.venv\Scripts\python.exe -X utf8 -m src prepare
+.\.venv\Scripts\python.exe -X utf8 -m src demo --output outputs/offline-demo-utf8
+$env:CINDRELO_OUTPUT_DIR = "outputs/offline-demo-utf8"
+.\.venv\Scripts\python.exe -X utf8 -m streamlit run app.py --browser.gatherUsageStats false
+```
+
+Apply `-X utf8` to the training, replay, agent and test commands below as well. Explicit `encoding="utf-8"` throughout backend file handling remains a follow-up improvement. For the walkthrough and integration rehearsal results, see [the demo guide](docs/DEMO.md).
 
 ## Train and replay the full period
 
