@@ -19,9 +19,15 @@ def eligible_run(issued_at, delay_hours):
 
 
 class Weather:
-    def __init__(self, cfg, offline=False, cache_dir=None):
+    def __init__(self, cfg, offline=False, cache_dir=None, *, refresh=False,
+                 fallback_cache_dirs=(), stable_hashes=False, timeout=45, attempts=3):
         self.cfg, self.offline = cfg, offline
         self.cache_dir = ROOT / "data/weather" if cache_dir is None else cache_dir
+        self.refresh = refresh
+        self.fallback_cache_dirs = fallback_cache_dirs
+        self.stable_hashes = stable_hashes
+        self.timeout, self.attempts = timeout, attempts
+        self.retrievals = []
 
     def fetch(self, turbine, run):
         run = utc(run)
@@ -30,17 +36,24 @@ class Weather:
                   "run": run.strftime("%Y-%m-%dT%H:%M"), "models": self.cfg["weather_model"],
                   "hourly": ",".join(VARIABLES), "wind_speed_unit": "ms", "forecast_days": 4}
         path = self.cache_dir / (digest(params) + ".json")
-        if path.exists():
-            envelope = json.loads(path.read_text(encoding="utf-8-sig"))
-            if envelope["content_hash"] != digest(envelope["response"]):
-                raise ValueError(f"Weather cache checksum mismatch: {path.name}")
-            return envelope
+        cached = None
+        for candidate in [path, *[directory / path.name for directory in self.fallback_cache_dirs]]:
+            if candidate.exists():
+                cached = json.loads(candidate.read_text(encoding="utf-8-sig"))
+                if cached["request"] != params:
+                    raise ValueError(f"Weather cache request mismatch: {candidate.name}")
+                if cached["content_hash"] != digest(cached["response"]):
+                    raise ValueError(f"Weather cache checksum mismatch: {candidate.name}")
+                break
+        if cached is not None and (self.offline or not self.refresh):
+            self.retrievals.append({"turbine_id": turbine, "run_time": iso(run), "source": "cache"})
+            return cached
         if self.offline:
             raise FileNotFoundError(f"No cached weather for {turbine} at {iso(run)}")
         url = ENDPOINT + "?" + urlencode(params)
-        for attempt in range(3):
+        for attempt in range(self.attempts):
             try:
-                with urlopen(url, timeout=45) as response:
+                with urlopen(url, timeout=self.timeout) as response:
                     payload = json.load(response)
                 if "hourly" not in payload:
                     raise ValueError("Provider returned no hourly weather")
@@ -48,14 +61,20 @@ class Weather:
                             "retrieved_at": iso(pd.Timestamp.now(tz="UTC")),
                             "content_hash": digest(payload), "response": payload}
                 write_json(path, envelope)
+                self.retrievals.append({"turbine_id": turbine, "run_time": iso(run), "source": "external"})
                 time.sleep(0.15)
                 return envelope
-            except (OSError, ValueError):
-                if attempt == 2:
+            except (OSError, ValueError) as exc:
+                if attempt == self.attempts - 1:
+                    if self.refresh and cached is not None:
+                        self.retrievals.append({"turbine_id": turbine, "run_time": iso(run),
+                                                "source": "cached_fallback", "reason": type(exc).__name__})
+                        return cached
                     raise
                 time.sleep(2 ** attempt)
 
     def horizon(self, issued_at, run=None):
+        self.retrievals = []
         issue = utc(issued_at)
         if issue != issue.floor("h"):
             raise ValueError("Issuance must be on the hour")
@@ -92,5 +111,14 @@ class Weather:
             frames.append(frame)
             hashes.append(envelope["content_hash"])
         result = pd.concat(frames, ignore_index=True)
-        result["weather_hash"] = digest(hashes)
+        if self.stable_hashes:
+            # Provider generation duration/retrieval timestamps are not model inputs.
+            # Refreshing identical forecast values must retain their identity.
+            fields = ["valid_time", "turbine_id", "weather_run_time", "grid_latitude", "grid_longitude", *VARIABLES]
+            identity = result[fields].copy()
+            for column in ["valid_time", "weather_run_time"]:
+                identity[column] = identity[column].map(iso)
+            result["weather_hash"] = digest(identity.to_dict("list"))
+        else:
+            result["weather_hash"] = digest(hashes)
         return result

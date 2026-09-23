@@ -1,9 +1,10 @@
-"""Cindrelo's offline, read-only dashboard for contract-v1 output files."""
+"""Cindrelo's forecast dashboard with an explicit full-cycle run action."""
 import streamlit as st
 import pandas as pd
 
 from ui.charts import forecast_chart
 from ui.designs import apply_theme, masthead, summary_cards
+from ui.runner import displayed_directory, render_run_controls
 from ui.data import ArtifactError, ROOT, TURBINES, aligned_actuals, compare_forecasts, export_filename, export_forecast, forecast_choices, load_dashboard, output_directory, previous_issuances
 
 SYNTHETIC_BANNER = "SYNTHETIC DEMO DATA — not model results"
@@ -121,7 +122,7 @@ def main():
     st.set_page_config(page_title="Cindrelo — Wind power forecast", page_icon="🌬️", layout="wide")
     apply_theme()
     try:
-        directory = output_directory()
+        directory = displayed_directory(output_directory())
     except ArtifactError as exc:
         st.error(str(exc))
         st.stop()
@@ -129,14 +130,18 @@ def main():
         st.subheader("Cindrelo")
         st.caption("Forecast review")
         st.divider()
+        directory_display = st.container()
+        st.caption("Refresh reloads saved artifacts. It does not run the forecasting pipeline.")
+    masthead()
+    intro, refresh = st.columns([5, 1])
+    intro.caption("Cindrelo — Wind power forecast · Hourly normalized power for two wind turbines")
+    refresh.button("Refresh", width="stretch", help="Reload saved files only. No weather requests or model training.")
+    directory = render_run_controls(directory)
+    with directory_display:
         st.markdown("**Loaded directory**")
         st.code(str(directory.relative_to(ROOT)) if directory.is_relative_to(ROOT) else str(directory), language=None, wrap_lines=True)
         with st.expander("Resolved path"):
             st.code(str(directory), language=None, wrap_lines=True)
-        st.button("Refresh", width="stretch", help="Reload saved files only. No weather requests or model training.")
-        st.caption("Refresh reloads saved artifacts. It does not run the forecasting pipeline.")
-    masthead()
-    st.caption("Cindrelo — Wind power forecast · Hourly normalized power for two wind turbines")
     try:
         data = load_dashboard(directory)
     except ArtifactError as exc:
