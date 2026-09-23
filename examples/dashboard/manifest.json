@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "data_kind": "model_output",
+  "timezone": "UTC",
+  "target_unit": "normalized_power",
+  "description": "Archived-weather model forecasts; historical provenance remains unverified.",
+  "warnings": [
+    "Raw timestamps assumed Asia/Almaty, interval starts; organizer confirmation pending.",
+    "Weather availability assumed initialization + 8 hours; historical publication provenance unverified.",
+    "Open-Meteo ECMWF IFS archive may contain hindcasts; as-issued compliance is not established.",
+    "Power is normalized, not MW/MWh; February actuals are absent from supplied data.",
+    "Weather: Open-Meteo (https://open-meteo.com/), ECMWF; CC BY 4.0 attribution."
+  ],
+  "config": {
+    "raw_timezone": "Asia/Almaty",
+    "calendar_timezone": "Asia/Almaty",
+    "timestamp_convention": "interval_start",
+    "weather_delay_hours": 8,
+    "weather_model": "ecmwf_ifs",
+    "train_start": "2025-09-01",
+    "validation_start": "2026-01-01",
+    "validation_end": "2026-02-01",
+    "turbines_note": "Coordinates from the brief; capacities and hub heights unspecified.",
+    "turbines": {
+      "turbine_1": {
+        "latitude": 43.64515,
+        "longitude": 78.535604,
+        "file_glob": "*turbine 1.csv"
+      },
+      "turbine_2": {
+        "latitude": 43.643198,
+        "longitude": 78.538828,
+        "file_glob": "*turbine 2.csv"
+      }
+    }
+  }
+}

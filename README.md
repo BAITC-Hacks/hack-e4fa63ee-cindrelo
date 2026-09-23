@@ -1,6 +1,103 @@
-# hack-e4fa63ee-cindrelo
-Hackathon team repository for Cindrelo
+# Cindrelo — wind power forecasting
 
-- [Implementation approach](docs/HACKATHON_APPROACH.md)
-- [Dashboard teammate specification and PR workflow](docs/TEAMMATE_SPEC.md)
-- [Synthetic dashboard fixtures](docs/fixtures/dashboard/) — invented examples for UI development, not model results.
+Hourly normalized-power forecasts for two wind turbines, driven by archived weather. A bounded OpenAI tool controller fetches weather, validates temporal eligibility, runs a numerical model, compares revisions and publishes dashboard files. The same guarded tools also run deterministically without an API key.
+
+**Implemented:** data preparation, weather caching, December model selection, January holdout evaluation, February replay, agent execution/recovery, real dashboard examples and an offline demonstration. The Streamlit interface is developed separately on the dashboard branch.
+
+**Limitations:** source timezone and interval convention are assumed; weather publication delay is assumed; the archive's historical as-issued provenance is unverified. Forecasts carry `degraded` status and visible warnings. February has no supplied observations, so no February accuracy is claimed.
+
+## Quick start
+
+Tested with Python 3.14.7 on macOS ARM64. Run from the repository root:
+
+```sh
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements-backend.txt
+python -m src demo
+```
+
+`demo` **recomputes** two real January forecasts from the bundled empirical curve and four cached weather responses. It needs no network, API key or prior training. Outputs go to `outputs/offline-demo/`. Running it again skips numerical prediction for unchanged inputs. The included source turbine CSVs supply actuals.
+
+The UI can immediately consume `examples/dashboard/`: 192 genuine forecast rows, matching actuals, measured January metrics, and traces from two successful live OpenAI runs. After the dashboard branch is merged:
+
+```sh
+python -m pip install -r requirements-ui.txt
+CINDRELO_OUTPUT_DIR=examples/dashboard streamlit run app.py
+# Or use freshly recomputed forecasts:
+CINDRELO_OUTPUT_DIR=outputs/offline-demo streamlit run app.py
+```
+
+`docs/fixtures/dashboard/` remains synthetic UI test data. `examples/dashboard/` contains model results. Both follow [the same contract](docs/TEAMMATE_SPEC.md).
+
+## Train and replay the full period
+
+```sh
+python -m src prepare
+python -m src train
+python -m src replay
+```
+
+Training downloads daily single-run forecasts for September 2025–January 2026 at both coordinates, caches them under `data/weather/`, and fits three temporally separated model bundles. Requests have bounded retries. Re-running uses the cache. `python -m src train --offline` reproduces training after that cache exists.
+
+Replay covers local daily origins January 31–February 28. It writes 2,784 forecast rows (29 origins × 48 hours × 2 turbines) to `outputs/dashboard/forecasts.csv`. `february_day_ahead.csv` contains exactly 1,344 rows: February's 672 hours per turbine. It always selects horizons 25–48 from the preceding local midnight, rather than choosing a forecast based on future accuracy. March spillover remains in the full export only.
+
+The January 31 origin uses the December-trained bundle because a model fitted through January 31 would leak future observations at that origin. February origins use the final bundle fitted through January 31. All cutoffs use interval end times, not just target start timestamps.
+
+## Run the agent
+
+Set `OPENAI_API_KEY` in an ignored root `.env` file. Optional `OPENAI_MODEL` defaults to `gpt-4.1-mini`; `.env.example` shows the format. Keys are never required by the dashboard or deterministic pipeline.
+
+```sh
+python -m src forecast --issue 2026-01-09T19:00:00Z --agent --output outputs/agent-demo
+python -m src forecast --issue 2026-01-10T07:00:00Z --agent --output outputs/agent-demo
+```
+
+The second issuance advances the simulated clock 12 hours. A newer archived run becomes eligible and produces a new version, compared on 36 overlapping hours per turbine. Repeating an identical issuance and inputs deduplicates it. To re-demonstrate the live path after generating these versions, use a fresh output directory.
+
+The [Responses function-calling API](https://developers.openai.com/api/docs/guides/function-calling) controls the tool sequence and recovery choices. Numerical values come from Python. Code enforces weather availability, training cutoffs, complete horizons, valid power bounds and tool order. The agent gets at most 10 API turns; weather acquisition gets at most two run choices and three attempts per HTTP request. `--offline` disables weather network access but an `--agent` invocation still needs OpenAI access. Omit `--agent` for the deterministic controller, which needs no LLM.
+
+Tools: `fetch_weather`, `validate_inputs`, `predict_power`, `compare_forecasts`, `publish_forecast`. Errors, retries, tool results and skips are saved to `events.jsonl`. A failed run cannot publish invented forecasts. Full-month replay deliberately uses the deterministic controller to avoid hundreds of unnecessary LLM calls. This is an on-demand replay application; no background scheduler is installed.
+
+## Measured results
+
+Model selection used December 2025 only. The empirical curve's December MAE was **0.2236**, versus **0.2395** for the fixed CatBoost candidate, so the curve was selected before January evaluation.
+
+January 2026 holdout, both turbines and horizons pooled; 2,928 identical scored forecast/target pairs per model:
+
+| Model | MAE, normalized power |
+|---|---:|
+| **Empirical curve, selected** | **0.1669** |
+| CatBoost | 0.2087 |
+| Training mean | 0.3023 |
+| Last-known-power persistence | 0.3340 |
+
+Detailed per-turbine/horizon MAE, RMSE and sample counts are in [the measured metrics](examples/dashboard/metrics.csv). These results are conditional on the documented timezone and archive assumptions. They do not establish operational forecast accuracy or February performance.
+
+Training uses complete six-sample hourly means; missing hours remain unknown. The curve uses pre-cutoff measured turbine wind/power, then receives archived 100 m forecast wind for inference. Hub height is unconfirmed, so that wind-height mapping is an explicit approximation. CatBoost uses only archived weather, turbine ID, calendar features and lead times; no future measured wind or invented February power lags. Its fixed configuration is 400 trees, depth 6, learning rate 0.05, seed 42. No hyperparameter search used January labels.
+
+## Assumptions, provenance and reproducibility
+
+See [config.json](config.json): raw and calendar timezone `Asia/Almaty`, timestamps treated as interval starts, local midnight issuance, ECMWF IFS 00/12 UTC runs, **assumed eight-hour publication delay**. IANA timezone handling preserves Kazakhstan's historical offset change; one ambiguous hour per turbine is excluded rather than guessed. Six samples are required for an hourly target. Telemetry is assumed available at the end of its hourly interval for the persistence baseline.
+
+Only weather runs with `initialization + delay <= issuance` are eligible. Returned weather must cover all 48 target hours with finite values and expected units. Cached envelopes preserve request coordinates, returned grid coordinates, initialization, retrieval time, units, URL and content hash. Retrieval today is not evidence of historical availability. Do not describe these archives as verified as-issued forecasts until organizers confirm their acceptability. The [Open-Meteo Single Runs API](https://open-meteo.com/en/docs/single-runs-api) is used instead of a stitched historical series.
+
+Weather attribution: **Open-Meteo and ECMWF**, [Open-Meteo](https://open-meteo.com/), [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Bundled weather is an attributed demonstration subset. Source turbine observations are supplied by the hackathon organizers. Normalized power is not MW or MWh; no capacity or station-energy conversion is invented.
+
+Artifacts and downloads live in ignored `artifacts/`, `data/`, and `outputs/`. Portable example curve parameters and four cached weather responses live in `examples/backend/`; the example model uses only data available before January 2026. Full CatBoost bundles are local pickle files: load only files produced by this project. Configuration changes require regeneration; model/config mismatches fail explicitly. `requirements-backend.lock` records the full tested development environment; the smaller `.txt` file pins direct runtime packages.
+
+Use one writer per output directory. Individual files are replaced atomically, but publication of the entire directory is not transactional; refresh the UI after the CLI finishes. `events.jsonl` timestamps represent simulated issuance; `executed_at` records actual execution time. This is a hackathon CLI, not a multi-user service.
+
+## Verification and ownership
+
+```sh
+python -m pip install -r requirements-dev.txt
+python -m pytest -q
+python -m src demo --output outputs/verification
+```
+
+Tests cover missing/ambiguous observations, future-weather and future-training rejection, missing weather coverage, output bounds/completeness, tool order, deduplication, forecast revision, older-run recovery, nullable timestamps and the agent tool protocol. Live OpenAI execution, recovery from an injected weather outage, a complete February replay, and a fresh-environment offline run were also verified. The real recovery trace is in `examples/backend/recovery-events.jsonl`; its deliberately injected failure is labelled explicitly.
+
+Backend: `src/`, configuration, dependencies, root README and real examples. Dashboard teammate: `app.py`, `ui/`, `assets/`, `requirements-ui.txt`, `docs/DEMO.md`. Work on feature branches and integrate through PRs.
+
+Planning context: [hackathon approach](docs/HACKATHON_APPROACH.md) · [dashboard handoff](docs/TEAMMATE_SPEC.md).

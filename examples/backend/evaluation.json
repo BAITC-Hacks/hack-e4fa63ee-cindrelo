@@ -1,0 +1,22 @@
+{
+  "selected": "curve",
+  "selection_window": "December 2025",
+  "selection_mae": {
+    "catboost": 0.2395138586190036,
+    "curve": 0.22362053677654473
+  },
+  "january_mae": {
+    "catboost": 0.20873449196385563,
+    "curve": 0.16689104476449365,
+    "mean": 0.3023168799895897,
+    "persistence": 0.3339828096539162
+  },
+  "january_pairs_per_model": {
+    "catboost": 2928,
+    "curve": 2928,
+    "mean": 2928,
+    "persistence": 2928
+  },
+  "final_model": "final-5d51b05b4fff",
+  "weather_rows": 14688
+}
