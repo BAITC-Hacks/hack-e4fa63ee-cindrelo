@@ -19,6 +19,9 @@ FORECAST_COLUMNS = (
     "power_normalized", "weather_run_time", "weather_available_at",
     "model_version", "input_hash", "status",
 )
+ACTUAL_COLUMNS = ("valid_time", "turbine_id", "power_normalized")
+METRIC_COLUMNS = ("model", "turbine_id", "horizon_bucket", "mae", "rmse", "n_samples", "period_start", "period_end")
+EVENT_COLUMNS = ("forecast_id", "timestamp", "tool", "status", "message")
 
 
 class ArtifactError(ValueError):
@@ -30,12 +33,20 @@ class DashboardData:
     manifest: dict
     forecasts: pd.DataFrame
     original_forecasts: pd.DataFrame
+    actuals: pd.DataFrame
+    metrics: pd.DataFrame
+    events: pd.DataFrame
 
 
 def output_directory() -> Path:
     configured = os.environ.get("CINDRELO_OUTPUT_DIR")
-    path = Path(configured).expanduser() if configured else ROOT / "docs/fixtures/dashboard"
-    return (path if path.is_absolute() else ROOT / path).resolve()
+    if configured is not None and not configured.strip():
+        raise ArtifactError("CINDRELO_OUTPUT_DIR: the override is empty. Set a directory, or unset it to use the fixture.")
+    try:
+        path = Path(configured).expanduser() if configured is not None else ROOT / "docs/fixtures/dashboard"
+        return (path if path.is_absolute() else ROOT / path).resolve()
+    except (OSError, ValueError, RuntimeError):
+        raise ArtifactError("CINDRELO_OUTPUT_DIR: invalid directory. Set an accessible artifact directory and restart the app.") from None
 
 
 def read_text(directory: Path, filename: str) -> str:
@@ -79,12 +90,16 @@ def load_manifest(directory: Path) -> dict:
 def read_csv(directory: Path, filename: str, required: tuple[str, ...]) -> pd.DataFrame:
     content = read_text(directory, filename)
     try:
-        header = next(csv.reader(io.StringIO(content)), [])
+        reader = csv.reader(io.StringIO(content), strict=True)
+        header = next(reader, [])
         if len(header) != len(set(header)):
             raise ArtifactError(f"{filename}: duplicate column names. Publish a unique header.")
         missing = sorted(set(required) - set(header))
         if missing:
             raise ArtifactError(f"{filename}: missing required columns: {', '.join(missing)}.")
+        for row in reader:
+            if row and len(row) != len(header):
+                raise ArtifactError(f"{filename}: row near line {reader.line_num} has {len(row)} fields; expected {len(header)}. Check delimiters and quoting.")
         return pd.read_csv(io.StringIO(content), dtype=str, keep_default_na=False)
     except (pd.errors.ParserError, pd.errors.EmptyDataError, csv.Error):
         raise ArtifactError(f"{filename}: malformed CSV. Use a comma-delimited UTF-8 file with a header.") from None
@@ -155,16 +170,63 @@ def load_forecasts(directory: Path) -> tuple[pd.DataFrame, pd.DataFrame]:
             part = run[run.turbine_id.eq(turbine)]
             if set(part.horizon_hours) != set(range(1, 49)) or len(part) != 48:
                 raise ArtifactError(f"{filename}: forecast {forecast_id} needs 48 unique hourly targets for {turbine}.")
-            for column in ("weather_run_time", "weather_available_at", "model_version", "input_hash"):
-                if part[column].nunique() != 1:
-                    raise ArtifactError(f"{filename}: {column} varies within forecast {forecast_id}, {turbine}; publish consistent provenance.")
     return frame.sort_values(["issued_at", "forecast_id", "turbine_id", "valid_time"]), original
+
+
+def load_actuals(directory: Path) -> pd.DataFrame:
+    filename = "actuals.csv"
+    frame = read_csv(directory, filename, ACTUAL_COLUMNS)
+    parse_times(frame, ("valid_time",), filename)
+    validate_turbines(frame, filename)
+    parse_number(frame, "power_normalized", filename, maximum=1, nullable=True)
+    if frame.duplicated(["turbine_id", "valid_time"]).any():
+        raise ArtifactError(f"{filename}: duplicate turbine/target-time keys. Publish one observation per key.")
+    if not frame.valid_time.eq(frame.valid_time.dt.floor("h")).all():
+        raise ArtifactError(f"{filename}: valid_time must label the start of an hourly interval.")
+    return frame.sort_values("valid_time")
+
+
+def load_metrics(directory: Path) -> pd.DataFrame:
+    filename = "metrics.csv"
+    frame = read_csv(directory, filename, METRIC_COLUMNS)
+    require_strings(frame, ("model",), filename)
+    validate_turbines(frame, filename)
+    if not frame.horizon_bucket.isin(["1-24", "25-48"]).all():
+        raise ArtifactError(f"{filename}: horizon_bucket must be 1-24 or 25-48.")
+    parse_times(frame, ("period_start", "period_end"), filename)
+    if not frame.period_start.lt(frame.period_end).all():
+        raise ArtifactError(f"{filename}: period_end must be later than period_start (end-exclusive).")
+    for column in ("mae", "rmse"):
+        parse_number(frame, column, filename)
+    parse_number(frame, "n_samples", filename, integer=True)
+    return frame.sort_values(["period_start", "horizon_bucket", "model"])
+
+
+def load_events(directory: Path) -> pd.DataFrame:
+    filename = "events.jsonl"
+    records = []
+    for number, line in enumerate(read_text(directory, filename).splitlines(), 1):
+        if not line.strip():
+            continue
+        try:
+            record = json.loads(line, parse_constant=reject_constant)
+        except (ValueError, json.JSONDecodeError):
+            raise ArtifactError(f"{filename}: line {number} must be a standard JSON object without NaN or Infinity.") from None
+        if not isinstance(record, dict) or any(not isinstance(record.get(key), str) for key in EVENT_COLUMNS):
+            raise ArtifactError(f"{filename}: line {number} requires string fields: {', '.join(EVENT_COLUMNS)}.")
+        records.append({key: record[key] for key in EVENT_COLUMNS})
+    frame = pd.DataFrame(records, columns=EVENT_COLUMNS)
+    require_strings(frame, ("forecast_id", "tool"), filename)
+    parse_times(frame, ("timestamp",), filename)
+    if not frame.status.isin(["started", "completed", "warning", "failed", "skipped"]).all():
+        raise ArtifactError(f"{filename}: status must be started, completed, warning, failed or skipped.")
+    return frame.sort_values("timestamp", kind="stable")
 
 
 def load_dashboard(directory: Path) -> DashboardData:
     manifest = load_manifest(directory)
     forecasts, original = load_forecasts(directory)
-    return DashboardData(manifest, forecasts, original)
+    return DashboardData(manifest, forecasts, original, load_actuals(directory), load_metrics(directory), load_events(directory))
 
 
 def forecast_choices(forecasts: pd.DataFrame) -> pd.DataFrame:
@@ -179,3 +241,27 @@ def export_forecast(data: DashboardData, forecast_id: str) -> bytes:
 def export_filename(forecast_id: str) -> str:
     safe_id = re.sub(r"[^\w.-]", "_", forecast_id, flags=re.UNICODE)[:120]
     return f"cindrelo-forecast-{safe_id}.csv"
+
+
+def previous_issuances(forecasts: pd.DataFrame, forecast_id: str) -> pd.DataFrame:
+    issue = forecasts.loc[forecasts.forecast_id.eq(forecast_id), "issued_at"].iloc[0]
+    choices = forecast_choices(forecasts)
+    earlier = choices[choices.issued_at.lt(issue)]
+    # IDs are opaque, not ordered revision numbers. If the prior issuance has
+    # multiple versions, let the user choose explicitly between those versions.
+    return earlier[earlier.issued_at.eq(earlier.issued_at.max())]
+
+
+def compare_forecasts(selected: pd.DataFrame, previous: pd.DataFrame) -> pd.DataFrame:
+    return selected[["valid_time", "power_normalized"]].merge(
+        previous[["valid_time", "power_normalized"]], on="valid_time", how="inner",
+        suffixes=("_selected", "_previous"), validate="one_to_one",
+    ).sort_values("valid_time")
+
+
+def aligned_actuals(selected: pd.DataFrame, actuals: pd.DataFrame, turbine: str) -> pd.DataFrame:
+    # Keep the selected hourly grid so missing observations break the line.
+    return selected[["valid_time"]].merge(
+        actuals.loc[actuals.turbine_id.eq(turbine), ["valid_time", "power_normalized"]],
+        on="valid_time", how="left", validate="one_to_one",
+    ).sort_values("valid_time")
