@@ -44,7 +44,7 @@ def show_metrics(metrics, turbine, synthetic):
 
 def show_events(events, forecast_id, synthetic):
     st.subheader("Saved tool trace")
-    st.caption("Recorded events for the selected forecast, ordered by execution time in UTC. Viewing this trace does not run an agent.")
+    st.caption("Recorded events for the selected forecast, ordered by supplied timestamp in UTC. Replay timestamps may represent simulated issuance. Viewing this trace does not run an agent.")
     if synthetic:
         st.warning("SYNTHETIC TRACE — example events; no real tool executed")
     selected_events = events[events.forecast_id.eq(forecast_id)]

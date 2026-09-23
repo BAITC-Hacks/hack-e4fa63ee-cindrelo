@@ -33,7 +33,25 @@ CINDRELO_OUTPUT_DIR=outputs/dashboard python -m streamlit run app.py --browser.g
 
 Relative data paths resolve from the app's repository directory, regardless of the caller's working directory. Launching from elsewhere is supported by passing the absolute path to `app.py`. The sidebar shows the resolved directory. After the backend publishes a complete snapshot, select **Refresh** to reload the files. A bad override displays an actionable filename-specific error; it never silently uses the fixture instead.
 
-## Demo walkthrough (2–3 minutes)
+## Real-data rehearsal (2–3 minutes)
+
+Use the [Windows UTF-8 commands in README.md](../README.md#windows-powershell-enable-utf-8) to generate `outputs/offline-demo/` and start the dashboard against that directory. On other platforms, run `python -m src demo` and set `CINDRELO_OUTPUT_DIR=outputs/offline-demo`. Use `examples/dashboard` when presenting the saved live-agent traces. Offline regeneration uses the deterministic controller and must not be described as a new OpenAI agent run.
+
+1. **0:00–0:30:** Point out **Published model output**, the source directory and **Degraded** status. Explain that raw timezone and historical weather availability remain assumptions; power is normalized, not MW/MWh.
+2. **0:30–1:10:** Select the latest issuance, 10 January 2026 at 07:00 UTC. Toggle the dashed previous issuance: there are 36 overlapping hours. Turbine 1 revision is 0.0522; Turbine 2 is 0.0515. Both latest forecast windows have actual observations. Explain that revision measures changed forecasts, not accuracy.
+3. **1:10–1:40:** Open **Model comparison**, change the horizon bucket and turbine, and read the January evaluation window. The pooled January MAE is 0.1669 for the curve versus 0.3340 for persistence; individual filtered table rows differ from that pooled score. No February accuracy is available.
+4. **1:40–2:15:** Open **Tool trace** and expand a completed prediction or publication. After repeating the offline CLI demo, show `predict_power · SKIPPED` with “Unchanged inputs; prediction skipped.” Displayed timestamps come from the replay scenario; wall-clock execution times are recorded separately in the source events.
+5. **2:15–2:45:** Return to **Forecast**, change issuance, download the selected 96-row CSV for both turbines, and use **Refresh** after a complete published snapshot. Explain that Refresh reads files and does not execute the agent.
+
+### Integration rehearsal — 23 September 2026
+
+- Python 3.12 on Windows, using `-X utf8`: combined backend/UI suite passes **22 tests plus 10 subtests**.
+- Offline regeneration reproduces all 192 committed example predictions exactly. A second run deduplicates both versions; forecasts remain unchanged and skipped events appear in the UI.
+- The dashboard accepts regenerated forecasts, actuals, metrics and events. Both CSV payloads preserve all 96 rows and both turbines. Browser checks exercise real-data forecast, metrics and saved trace views.
+- Full February replay and a new live OpenAI call were not repeated in this rehearsal. The committed portable examples cover January only; the full February export must be supplied or reproduced from the full weather/model artifacts before final submission. Existing recovery evidence is in `examples/backend/recovery-events.jsonl` and explicitly labels the injected failure.
+- Browser file-saving remains a manual check in this environment; CSV generation is verified independently.
+
+## Synthetic fixture walkthrough (2–3 minutes)
 
 1. Point out the prominent **SYNTHETIC DEMO DATA — not model results** banner.
 2. Select Turbine 1 or Turbine 2. The newest issuance is selected initially; the forecast ID distinguishes versions.
@@ -53,7 +71,7 @@ Relative data paths resolve from the app's repository directory, regardless of t
 - Actuals join on turbine and target timestamp. Missing observations break the line, including when every observation is absent. February 2026 periods without observations include an explicit unavailability note.
 - Header-only actuals and metrics files, and an empty events file, render helpful empty states. Event messages render as plain text. Failed unpublished runs remain visible in the sidebar.
 - Missing files, unsupported manifest versions, invalid UTC timestamps, duplicate forecast keys, invalid power/horizon values and unavailable-at-issuance weather produce clear errors.
-- Unknown extra forecast columns are preserved in downloads. Backend output can replace the fixture by setting the directory; no UI code changes are needed. Real backend artifacts were not yet available for integration testing.
+- Unknown extra forecast columns are preserved in downloads. Backend output replaces the fixture by setting the directory; no UI code changes are needed. Both committed and freshly regenerated real backend examples have passed integration checks.
 
 Tested from a fresh Python 3.12 environment with the pinned requirements: Streamlit 1.64.0, pandas 3.0.6 and Plotly 7.1.0. Run the 12 contract/interaction tests from the repository root:
 
