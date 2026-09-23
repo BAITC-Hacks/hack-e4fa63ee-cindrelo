@@ -1,6 +1,6 @@
 # Cindrelo dashboard demo
 
-This read-only dashboard displays the files defined in [TEAMMATE_SPEC.md](TEAMMATE_SPEC.md). The default fixture is synthetic: every number is invented for interface development. It is not a model result or measured validation performance.
+This dashboard displays the files defined in [TEAMMATE_SPEC.md](TEAMMATE_SPEC.md) and can execute the full forecasting cycle with **Run forecast cycle**. The default fixture is synthetic: every number is invented for interface development. It is not a model result or measured validation performance. A successful cycle switches the view to its real model output.
 
 The dashboard uses **Horizon**, the selected presentation design. Use the Forecast, Model comparison and Tool trace tabs. See the [Horizon design guide](DESIGNS.md).
 
@@ -20,7 +20,7 @@ python -m pip install -r requirements-ui.txt
 python -m streamlit run app.py --browser.gatherUsageStats false
 ```
 
-Open the local URL printed by Streamlit. Installation requires package access; normal dashboard use needs no API keys or external network. It reads local files and does not fetch weather, train a model, or execute an agent.
+Open the local URL printed by Streamlit. Viewing saved files needs no API key or external network. To use the run button, also install `requirements-backend.txt`; live mode requires `OPENAI_API_KEY` in the local ignored `.env` file. The cycle uses an existing trained model and does not retrain it.
 
 To use backend artifacts in PowerShell:
 
@@ -35,7 +35,23 @@ On macOS/Linux:
 CINDRELO_OUTPUT_DIR=outputs/dashboard python -m streamlit run app.py --browser.gatherUsageStats false
 ```
 
-Relative data paths resolve from the app's repository directory, regardless of the caller's working directory. Launching from elsewhere is supported by passing the absolute path to `app.py`. The sidebar shows the resolved directory. After the backend publishes a complete snapshot, select **Refresh** to reload the files. A bad override displays an actionable filename-specific error; it never silently uses the fixture instead.
+Relative data paths resolve from the app's repository directory, regardless of the caller's working directory. Launch from the repository root to load its Streamlit theme configuration. The sidebar shows the resolved directory. After an external CLI run finishes, select **Refresh** to reload its files. The run button selects its completed snapshot automatically. A bad override displays an actionable filename-specific error; it never silently uses the fixture instead.
+
+## One-click agent demonstration
+
+Start against `examples/dashboard` with both backend and UI dependencies installed. Keep the default **Run options**: first issuance 9 January 2026, 19:00 UTC, live OpenAI agent and automatic revision 12 hours later.
+
+1. Press **Run forecast cycle** once. Expand progress to show actual weather retrieval, data preparation, validation, model prediction, revision analysis and publication events.
+2. The same action advances the simulated clock and repeats those steps with the newer eligible archived weather run. Both forecasts have 48 hours for each turbine: 192 rows in total.
+3. On completion, the dashboard automatically selects 10 January, 07:00 UTC. Show the dashed previous issuance and the change across 36 overlapping hours per turbine. Explain that this demonstrates a historical update, not a background scheduler or today's forecast.
+4. Open **Tool trace**. The new events belong to the run just executed. `weather_source` identifies external retrieval or a verified cached fallback; fallback carries a visible warning.
+5. Repeat the button press to demonstrate deduplication. Unchanged weather/model inputs reuse forecasts while actual observations refresh. The trace records prediction skips.
+
+For a network-free fallback, select **Offline deterministic rehearsal (cached weather)** in Run options. It executes the same guarded numerical tools without an LLM; describe it as an offline rehearsal. Missing keys, backend dependencies or failed cycles produce an error and preserve the previous displayed forecast. Completed runs appear under `outputs/dashboard-runs/<session>/snapshot-<id>/`.
+
+Source timezone, interval convention and historical weather availability remain assumptions. Show **Degraded** status and the source warnings. The run uses the existing trained model; future actuals are displayed for comparison and are not model inputs.
+
+Verified on macOS in Chrome with a dark OS preference: the live button retrieved four external weather responses, completed both OpenAI-controlled forecasts, selected the latest result and saved its 96-row CSV through the browser. All 192 predictions matched the committed January example values. The combined suite passes 39 tests and 12 subtests, including offline cycles, deduplication, observation updates and failed-publication recovery.
 
 ## Real-data rehearsal (2–3 minutes)
 
@@ -97,4 +113,4 @@ For backend handoff, publish all five contract files into one directory, set `CI
 
 ![Saved chronological events with a visible warning](../assets/dashboard-trace.png)
 
-There is deliberately no Run agent control: inspecting saved artifacts does not mean an agent has just executed.
+These screenshots show the earlier saved-artifact interface. The current dashboard also has the working **Run forecast cycle** control described above. Merely opening saved files or pressing Refresh does not execute the agent.

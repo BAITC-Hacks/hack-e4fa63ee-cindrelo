@@ -1,8 +1,8 @@
 # Cindrelo — wind power forecasting
 
-Hourly normalized-power forecasts for two wind turbines, driven by archived weather. A bounded OpenAI tool controller fetches weather, validates temporal eligibility, runs a numerical model, compares revisions and publishes dashboard files. The same guarded tools also run deterministically without an API key.
+Hourly normalized-power forecasts for two wind turbines, driven by archived weather. A bounded OpenAI tool controller fetches weather, prepares data, validates temporal eligibility, runs a numerical model, compares revisions and publishes dashboard files. The same guarded tools also run deterministically without an API key.
 
-**Implemented:** data preparation, weather caching, December model selection, January holdout evaluation, February replay, agent execution/recovery, real dashboard examples, an offline demonstration, and a Streamlit dashboard with forecasts, revisions, actuals, metrics and saved tool traces.
+**Implemented:** data preparation, weather caching, December model selection, January holdout evaluation, February replay, agent execution/recovery, real dashboard examples, an offline demonstration, and a Streamlit dashboard with a one-click forecast cycle, forecasts, revisions, actuals, metrics and tool traces.
 
 **Limitations:** source timezone and interval convention are assumed; weather publication delay is assumed; the archive's historical as-issued provenance is unverified. Forecasts carry `degraded` status and visible warnings. February has no supplied observations, so no February accuracy is claimed.
 
@@ -31,6 +31,22 @@ CINDRELO_OUTPUT_DIR=outputs/offline-demo streamlit run app.py
 Start Streamlit from the repository root so it loads [`.streamlit/config.toml`](.streamlit/config.toml). Horizon uses an explicit light theme for native controls and text, including on machines with a dark system preference. After updating this file, stop Streamlit with `Ctrl+C`, restart it, and reload the browser. The [Streamlit theme configuration](https://docs.streamlit.io/develop/concepts/configuration/theming) keeps widget colors consistent with the dashboard's light backgrounds.
 
 `docs/fixtures/dashboard/` remains synthetic UI test data. `examples/dashboard/` contains model results. Both follow [the same contract](docs/TEAMMATE_SPEC.md).
+
+### Run the full cycle from the dashboard
+
+Install both backend and UI requirements as above, set `OPENAI_API_KEY` in an ignored root `.env` file, and press **Run forecast cycle**. The default action:
+
+1. Retrieves external archived weather for the 9 January 2026, 19:00 UTC issuance.
+2. Prepares hourly observations, validates inputs and runs the trained numerical model.
+3. Analyzes revisions and publishes 48 hourly predictions for each turbine.
+4. Advances the replay clock 12 hours, fetches the newer eligible weather run and repeats the cycle automatically.
+5. Displays the latest forecast, previous issuance, actuals and the recorded tool trace.
+
+Progress comes from actual tool calls. This is a historical replay; it does not claim to forecast today's weather. The bundled trained curve makes the January demonstration work without a separate training run. **Run options** lets you change the issuance, disable the automatic revision, or select **Offline deterministic rehearsal** with cached weather and no OpenAI call. **Refresh** only reloads files.
+
+Live mode rechecks external weather on every run. Each weather request has one attempt with a 12-second timeout before falling back to a verified cache when available; cache fallback is visibly logged. Input identity ignores provider timing metadata, so repeated unchanged inputs reuse forecasts. Changed weather values or a newly eligible run produce a new version. Actual observations refresh even when predictions are reused.
+
+Completed dashboard runs are immutable snapshots under `outputs/dashboard-runs/<session>/snapshot-<id>/`. The UI selects a snapshot only after the entire requested cycle succeeds; a failed revision keeps the previous view. Committed examples are preserved. The cycle runs on demand, with a simulated update; there is no background scheduler.
 
 <a id="windows-powershell-enable-utf-8"></a>
 ### Windows PowerShell
@@ -76,7 +92,7 @@ The January 31 origin uses the December-trained bundle because a model fitted th
 
 ## Run the agent
 
-Set `OPENAI_API_KEY` in an ignored root `.env` file. Optional `OPENAI_MODEL` defaults to `gpt-4.1-mini`; `.env.example` shows the format. Keys are never required by the dashboard or deterministic pipeline.
+Set `OPENAI_API_KEY` in an ignored root `.env` file. Optional `OPENAI_MODEL` defaults to `gpt-4.1-mini`; `.env.example` shows the format. Viewing saved dashboard files and running the deterministic pipeline require no key. The dashboard's live-agent button does require one.
 
 ```sh
 python -m src forecast --issue 2026-01-09T19:00:00Z --agent --output outputs/agent-demo
@@ -85,9 +101,9 @@ python -m src forecast --issue 2026-01-10T07:00:00Z --agent --output outputs/age
 
 The second issuance advances the simulated clock 12 hours. A newer archived run becomes eligible and produces a new version, compared on 36 overlapping hours per turbine. Repeating an identical issuance and inputs deduplicates it. To re-demonstrate the live path after generating these versions, use a fresh output directory.
 
-The [Responses function-calling API](https://developers.openai.com/api/docs/guides/function-calling) controls the tool sequence and recovery choices. Numerical values come from Python. Code enforces weather availability, training cutoffs, complete horizons, valid power bounds and tool order. The agent gets at most 10 API turns; weather acquisition gets at most two run choices and three attempts per HTTP request. `--offline` disables weather network access but an `--agent` invocation still needs OpenAI access. Omit `--agent` for the deterministic controller, which needs no LLM.
+The [Responses function-calling API](https://developers.openai.com/api/docs/guides/function-calling) controls the tool sequence and recovery choices. Numerical values come from Python. Code enforces weather availability, training cutoffs, complete horizons, valid power bounds and tool order. The agent gets at most 10 API turns; weather acquisition gets at most two run choices. CLI requests allow three attempts; the dashboard uses the shorter timeout/cache policy above. `--offline` disables weather network access but an `--agent` invocation still needs OpenAI access. Omit `--agent` for the deterministic controller, which needs no LLM.
 
-Tools: `fetch_weather`, `validate_inputs`, `predict_power`, `compare_forecasts`, `publish_forecast`. Errors, retries, tool results and skips are saved to `events.jsonl`. A failed run cannot publish invented forecasts. Full-month replay deliberately uses the deterministic controller to avoid hundreds of unnecessary LLM calls. This is an on-demand replay application; no background scheduler is installed.
+Tools: `fetch_weather`, `prepare_inputs`, `validate_inputs`, `predict_power`, `compare_forecasts`, `publish_forecast`. Errors, retries, tool results and skips are saved to `events.jsonl`. A failed run cannot publish invented forecasts. Full-month replay deliberately uses the deterministic controller to avoid hundreds of unnecessary LLM calls. This is an on-demand replay application; no background scheduler is installed.
 
 ## Measured results
 
@@ -116,7 +132,7 @@ Weather attribution: **Open-Meteo and ECMWF**, [Open-Meteo](https://open-meteo.c
 
 Artifacts and downloads live in ignored `artifacts/`, `data/`, and `outputs/`. Portable example curve parameters and four cached weather responses live in `examples/backend/`; the example model uses only data available before January 2026. Full CatBoost bundles are local pickle files: load only files produced by this project. Configuration changes require regeneration; model/config mismatches fail explicitly. `requirements-backend.lock` records the full tested development environment; the smaller `.txt` file pins direct runtime packages.
 
-Use one writer per output directory. Individual files are replaced atomically, but publication of the entire directory is not transactional; refresh the UI after the CLI finishes. `events.jsonl` timestamps represent simulated issuance; `executed_at` records actual execution time. This is a hackathon CLI, not a multi-user service.
+Use one writer per CLI output directory. CLI files are replaced individually; refresh the UI after the CLI finishes. The dashboard service publishes complete immutable snapshots and serializes cycles within its Streamlit process because preparation and weather caches are shared. Do not run a separate CLI writer alongside a dashboard cycle. `events.jsonl` timestamps represent simulated issuance; `executed_at` records actual execution time.
 
 ## Verification and ownership
 
@@ -126,7 +142,7 @@ python -m pytest -q
 python -m src demo --output outputs/verification
 ```
 
-The combined backend/UI suite passes **25 tests and 10 subtests**. `requirements-dev.txt` installs both backend and dashboard test dependencies. Tests cover missing/ambiguous observations, future-weather and future-training rejection, missing weather coverage, output bounds/completeness, tool order, deduplication, forecast revision, older-run recovery, nullable timestamps and the agent tool protocol. Live OpenAI execution, recovery from an injected weather outage, a complete February replay, and a fresh-environment offline run were also verified. PR #6 follow-up repeated the full February replay and a fresh live OpenAI call; the results and trace are in [examples/submission](examples/submission/README.md). The real recovery trace is in `examples/backend/recovery-events.jsonl`; its deliberately injected failure is labelled explicitly.
+The combined backend/UI suite passes **39 tests and 12 subtests**. The new dashboard cycle was also verified by pressing its live button in Chrome: four external weather responses, two completed OpenAI-controlled forecasts, 192 predictions matching the committed examples, and a saved 96-row CSV download. Service tests cover cache fallback, changed-input identity, observation refresh on deduplication and preservation of complete snapshots after failures. `requirements-dev.txt` installs both backend and dashboard test dependencies. Tests cover missing/ambiguous observations, future-weather and future-training rejection, missing weather coverage, output bounds/completeness, tool order, deduplication, forecast revision, older-run recovery, nullable timestamps and the agent tool protocol. Live OpenAI execution, recovery from an injected weather outage, a complete February replay, and a fresh-environment offline run were also verified. PR #6 follow-up repeated the full February replay and a fresh live OpenAI call; the results and trace are in [examples/submission](examples/submission/README.md). The real recovery trace is in `examples/backend/recovery-events.jsonl`; its deliberately injected failure is labelled explicitly.
 
 Backend: `src/`, configuration, dependencies, root README and real examples. Dashboard teammate: `app.py`, `ui/`, `assets/`, `requirements-ui.txt`, `docs/DEMO.md`. Work on feature branches and integrate through PRs.
 

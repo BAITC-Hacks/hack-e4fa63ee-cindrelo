@@ -132,7 +132,7 @@ def test_weather_failure_recovers_with_older_run(run_factory, monkeypatch):
 
 
 def test_agent_executes_tools_not_numeric_text(run_factory):
-    actions = iter([("fetch_weather", {"older_run": False}), ("validate_inputs", {}),
+    actions = iter([("fetch_weather", {"older_run": False}), ("prepare_inputs", {}), ("validate_inputs", {}),
                     ("predict_power", {"fallback": False}), ("compare_forecasts", {}), ("publish_forecast", {})])
 
     def respond(**kwargs):
